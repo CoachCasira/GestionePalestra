@@ -434,6 +434,7 @@
       <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_IdqqYcFtEfC8FKSr8wLufw" name="ExtensionPoint1"/>
       <include xmi:type="uml:Include" xmi:id="_2_bnAMFuEfC8FKSr8wLufw" addition="_t7H1QMFrEfC8FKSr8wLufw"/>
     </packagedElement>
+    <packagedElement xmi:type="uml:CallEvent" xmi:id="_wnQboMF8EfCyKOhvIabQqQ" name="sottoscriveAbbonamento"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Actor" xmi:id="_ZfNgIL2ZEfCE-siqO9X8wA" name="Cliente"/>
   <packagedElement xmi:type="uml:Actor" xmi:id="_xT6O8L2aEfCE-siqO9X8wA" name="PersonalTrainer">
@@ -541,6 +542,23 @@
     </eAnnotations>
     <ownedEnd xmi:type="uml:Property" xmi:id="_FfamAcFsEfC8FKSr8wLufw" name="pagaabbonamento" type="_yNd0MMFrEfC8FKSr8wLufw" association="_FfYw0MFsEfC8FKSr8wLufw"/>
     <ownedEnd xmi:type="uml:Property" xmi:id="_FfamAsFsEfC8FKSr8wLufw" name="cliente" type="_ZfNgIL2ZEfCE-siqO9X8wA" association="_FfYw0MFsEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:StateMachine" xmi:id="_KZZP4MFwEfCyKOhvIabQqQ" name="ClientStateMachine">
+    <region xmi:type="uml:Region" xmi:id="_PTpjYMFwEfCyKOhvIabQqQ" name="Region2">
+      <transition xmi:type="uml:Transition" xmi:id="_HY9vUMFxEfCyKOhvIabQqQ" source="_5Lu0kMFwEfCyKOhvIabQqQ" target="_BzvzQMFxEfCyKOhvIabQqQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_onmdcMF8EfCyKOhvIabQqQ" guard="_5pUSAMF8EfCyKOhvIabQqQ" source="_BzvzQMFxEfCyKOhvIabQqQ" target="_NtpZcMFxEfCyKOhvIabQqQ">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="_5pUSAMF8EfCyKOhvIabQqQ" name="pagato">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_5pU5EMF8EfCyKOhvIabQqQ" name="pagato">
+            <language>OCL</language>
+            <body>pagato==true</body>
+          </specification>
+        </ownedRule>
+        <trigger xmi:type="uml:Trigger" xmi:id="_qVnecMF8EfCyKOhvIabQqQ" name="sottoscriveAbbonamento" event="_wnQboMF8EfCyKOhvIabQqQ"/>
+      </transition>
+      <subvertex xmi:type="uml:Pseudostate" xmi:id="_5Lu0kMFwEfCyKOhvIabQqQ" name="inizio"/>
+      <subvertex xmi:type="uml:State" xmi:id="_BzvzQMFxEfCyKOhvIabQqQ" name="clienteNonAbbonato"/>
+      <subvertex xmi:type="uml:State" xmi:id="_NtpZcMFxEfCyKOhvIabQqQ" name="clienteAbbonato"/>
+    </region>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_WoZn0LvoEfCTgdBXOi_fLA">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Wod5QLvoEfCTgdBXOi_fLA" source="http://www.eclipse.org/uml2/2.0.0/UML">
