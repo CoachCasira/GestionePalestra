@@ -16,4 +16,21 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <!-- Dipendenze del progetto -->
+    <dependencies>
+        <!-- Log4j 2 API -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.21.0</version>
+        </dependency>
+
+        <!-- Log4j 2 Core (implementazione) -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.21.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

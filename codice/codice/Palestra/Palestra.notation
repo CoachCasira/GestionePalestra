@@ -2059,7 +2059,7 @@
   <notation:Diagram xmi:id="_MPIpgMFwEfCyKOhvIabQqQ" type="PapyrusUMLStateMachineDiagram" name="PalestraMacchinaStati" measurementUnit="Pixel">
     <children xmi:type="notation:Shape" xmi:id="_MPIpgcFwEfCyKOhvIabQqQ" type="StateMachine_Shape">
       <children xmi:type="notation:DecorationNode" xmi:id="_MPIpgsFwEfCyKOhvIabQqQ" type="StateMachine_NameLabel">
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MPIpg8FwEfCyKOhvIabQqQ" width="961" height="21"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MPIpg8FwEfCyKOhvIabQqQ" width="961" height="20"/>
       </children>
       <children xmi:type="notation:BasicCompartment" xmi:id="_MPIphMFwEfCyKOhvIabQqQ" type="StateMachine_RegionCompartment">
         <children xmi:type="notation:Shape" xmi:id="_PTsmsMFwEfCyKOhvIabQqQ" type="Region_Shape">
@@ -2111,7 +2111,7 @@
           <element xmi:type="uml:Region" href="Palestra.uml#_PTpjYMFwEfCyKOhvIabQqQ"/>
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PTsmscFwEfCyKOhvIabQqQ" width="961" height="420"/>
         </children>
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MPIpi8FwEfCyKOhvIabQqQ" y="21" width="961" height="420"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MPIpi8FwEfCyKOhvIabQqQ" y="20" width="961" height="421"/>
       </children>
       <element xmi:type="uml:StateMachine" href="Palestra.uml#_KZZP4MFwEfCyKOhvIabQqQ"/>
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MPIpjMFwEfCyKOhvIabQqQ" y="40" width="961" height="441"/>
