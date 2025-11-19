@@ -698,13 +698,11 @@
             </specification>
           </ownedRule>
         </transition>
-        <transition xmi:type="uml:Transition" xmi:id="_-lOaAMSrEfCsQt1KGgPYcA" source="_s8xyEMSqEfCsQt1KGgPYcA" target="_83Wi8MSrEfCsQt1KGgPYcA"/>
-        <transition xmi:type="uml:Transition" xmi:id="__WsTMMSrEfCsQt1KGgPYcA" source="_q8cHcMSpEfCsQt1KGgPYcA" target="_83Wi8MSrEfCsQt1KGgPYcA"/>
-        <transition xmi:type="uml:Transition" xmi:id="_ADDC4MSsEfCsQt1KGgPYcA" source="_KTMkYMSpEfCsQt1KGgPYcA" target="_83Wi8MSrEfCsQt1KGgPYcA"/>
-        <transition xmi:type="uml:Transition" xmi:id="_BFsysMSsEfCsQt1KGgPYcA" source="_83Wi8MSrEfCsQt1KGgPYcA" target="_3FVhAMSrEfCsQt1KGgPYcA">
-          <trigger xmi:type="uml:Trigger" xmi:id="_BnU5EMSsEfCsQt1KGgPYcA" name="consulenzaFinita" event="_Epg3sMSsEfCsQt1KGgPYcA"/>
-        </transition>
         <transition xmi:type="uml:Transition" xmi:id="_HULHIMSsEfCsQt1KGgPYcA" source="_3FVhAMSrEfCsQt1KGgPYcA" target="_NtpZcMFxEfCyKOhvIabQqQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_57qLcMU7EfC7L-cSLJgGVA" source="_q8cHcMSpEfCsQt1KGgPYcA" target="_4n8g0MU7EfC7L-cSLJgGVA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_7HnBMMU7EfC7L-cSLJgGVA" source="_KTMkYMSpEfCsQt1KGgPYcA" target="_4n8g0MU7EfC7L-cSLJgGVA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_7_IfEMU7EfC7L-cSLJgGVA" source="_s8xyEMSqEfCsQt1KGgPYcA" target="_4n8g0MU7EfC7L-cSLJgGVA"/>
+        <transition xmi:type="uml:Transition" xmi:id="__Mpj8MU7EfC7L-cSLJgGVA" source="_4n8g0MU7EfC7L-cSLJgGVA" target="_3FVhAMSrEfCsQt1KGgPYcA"/>
         <subvertex xmi:type="uml:Pseudostate" xmi:id="_5Lu0kMFwEfCyKOhvIabQqQ" name="inizio"/>
         <subvertex xmi:type="uml:State" xmi:id="_BzvzQMFxEfCyKOhvIabQqQ" name="clienteNonAbbonato"/>
         <subvertex xmi:type="uml:State" xmi:id="_NtpZcMFxEfCyKOhvIabQqQ" name="clienteAbbonato"/>
@@ -748,7 +746,7 @@
           </exit>
         </subvertex>
         <subvertex xmi:type="uml:State" xmi:id="_3FVhAMSrEfCsQt1KGgPYcA" name="clienteConDocumento"/>
-        <subvertex xmi:type="uml:Pseudostate" xmi:id="_83Wi8MSrEfCsQt1KGgPYcA" name="" kind="join"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_4n8g0MU7EfC7L-cSLJgGVA" name="fineConsulenza" kind="choice"/>
       </region>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_WoZn0LvoEfCTgdBXOi_fLA">
