@@ -50,14 +50,16 @@ public class InizializzazioneDb {
 	        // 6 - CLIENTE (CON luogoNascita AGGIUNTO)
 	        String sqlCliente = "CREATE TABLE IF NOT EXISTS CLIENTE (" +
 	                "ID_CLIENTE INT AUTO_INCREMENT PRIMARY KEY, " +
+	                "USERNAME VARCHAR(50) NOT NULL UNIQUE, " +     // <— NUOVO
 	                "NOME VARCHAR(100) NOT NULL, " +
 	                "COGNOME VARCHAR(100) NOT NULL, " +
 	                "CF VARCHAR(16) NOT NULL UNIQUE, " +
-	                "LUOGO_NASCITA VARCHAR(100) NOT NULL, " + // ← AGGIUNTO
+	                "LUOGO_NASCITA VARCHAR(100) NOT NULL, " +
 	                "DATA_NASCITA DATE NOT NULL, " +
 	                "IBAN VARCHAR(34), " +
 	                "PASSWORD VARCHAR(100) NOT NULL" +
 	                ");";
+
 
 	        // 7 - ABBONAMENTO
 	        String sqlAbbonamento = "CREATE TABLE IF NOT EXISTS ABBONAMENTO (" +

@@ -3,6 +3,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.Logger;
 
+import DB.GestioneDB;
 import DB.InizializzazioneDb;
 import controller.LoginController;
 import view.LoginView;
@@ -24,6 +25,7 @@ public class Palestra {
             view.setVisible(true);
         });
 
+        GestioneDB.stampaClienti();
 	}
 
 }
