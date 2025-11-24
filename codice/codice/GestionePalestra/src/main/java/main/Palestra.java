@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import controller.LoginController;
 import db.GestioneDB;
-import db.InizializzazioneDb;
+import db.InizializzazioneDB;
 import view.LoginView;
 public class Palestra {
 	
@@ -13,7 +13,7 @@ public class Palestra {
 	public static void main(String[] args) {
 		
 		 // Inizializza DB (tabelle)
-        InizializzazioneDb.init();
+        InizializzazioneDB.init();
 
         // Avvia GUI sul thread grafico
         SwingUtilities.invokeLater(() -> {

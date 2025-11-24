@@ -873,6 +873,7 @@
       <message xmi:type="uml:Message" xmi:id="_8CQY0Me5EfCaM4vwKxGouA" name="mostraAppConAbbonamento" messageSort="reply" receiveEvent="_bNMnQce5EfCElqa4LrZqyA" sendEvent="_bNMnQMe5EfCElqa4LrZqyA"/>
       <message xmi:type="uml:Message" xmi:id="_8CQY0ce5EfCaM4vwKxGouA" name="notificaEsitoNegativo" receiveEvent="_bNMnR8e5EfCElqa4LrZqyA" sendEvent="_bNMnRse5EfCElqa4LrZqyA"/>
     </packagedElement>
+    <packagedElement xmi:type="uml:Interaction" xmi:id="_outnEMlIEfCi7O5xBtefgA" name="Interaction55"/>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_8CQY0se5EfCaM4vwKxGouA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8CQY08e5EfCaM4vwKxGouA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>

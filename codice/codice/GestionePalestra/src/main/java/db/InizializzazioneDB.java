@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
-public class InizializzazioneDb {
+public class InizializzazioneDB {
 
     public static void init() {
 
@@ -123,7 +123,39 @@ public class InizializzazioneDb {
                 "ORARIO_DISP VARCHAR(100)" +
                 ");";
 
-        // 11 - CONSULENZA
+        // ====== TABELLE CORSI (coerenti con CorsoDAO) ======
+
+        // 11 - CORSO (catalogo corsi)
+        String sqlCorso = "CREATE TABLE IF NOT EXISTS CORSO (" +
+                "ID_CORSO INT AUTO_INCREMENT PRIMARY KEY, " +
+                "NOME VARCHAR(100) NOT NULL, " +
+                "DESCRIZIONE VARCHAR(500) NOT NULL, " +
+                "DURATA_MINUTI INT NOT NULL" +
+                ");";
+
+        // 12 - LEZIONE_CORSO (singole lezioni programmante)
+        String sqlLezioneCorso = "CREATE TABLE IF NOT EXISTS LEZIONE_CORSO (" +
+                "ID_LEZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
+                "ID_CORSO INT NOT NULL, " +
+                "DATA_LEZIONE DATE NOT NULL, " +
+                "ORA_LEZIONE TIME NOT NULL, " +
+                "POSTI_TOTALI INT NOT NULL, " +
+                "POSTI_PRENOTATI INT NOT NULL DEFAULT 0, " +
+                "ID_ISTRUTTORE INT NOT NULL, " +
+                "FOREIGN KEY (ID_CORSO) REFERENCES CORSO(ID_CORSO), " +
+                "FOREIGN KEY (ID_ISTRUTTORE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+                ");";
+
+        // 13 - ISCRIZIONE_CORSO (prenotazioni dei clienti alle lezioni)
+        String sqlIscrizioneCorso = "CREATE TABLE IF NOT EXISTS ISCRIZIONE_CORSO (" +
+                "ID_ISCRIZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
+                "ID_CLIENTE INT NOT NULL, " +
+                "ID_LEZIONE INT NOT NULL, " +
+                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
+                "FOREIGN KEY (ID_LEZIONE) REFERENCES LEZIONE_CORSO(ID_LEZIONE)" +
+                ");";
+
+        // 14 - CONSULENZA
         String sqlConsulenza = "CREATE TABLE IF NOT EXISTS CONSULENZA (" +
                 "ID_CONSULENZA INT AUTO_INCREMENT PRIMARY KEY, " +
                 "ID_CLIENTE INT NOT NULL, " +
@@ -136,7 +168,7 @@ public class InizializzazioneDb {
                 "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
                 ");";
 
-        // 12 - PERSONAL_TRAINER
+        // 15 - PERSONAL_TRAINER
         String sqlPersonalTrainer = "CREATE TABLE IF NOT EXISTS PERSONAL_TRAINER (" +
                 "ID_DIPENDENTE INT PRIMARY KEY, " +
                 "PARTITA_IVA VARCHAR(20), " +
@@ -145,21 +177,21 @@ public class InizializzazioneDb {
                 "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
                 ");";
 
-        // 13 - ISTRUTTORE_CORSO
+        // 16 - ISTRUTTORE_CORSO
         String sqlIstruttoreCorso = "CREATE TABLE IF NOT EXISTS ISTRUTTORE_CORSO (" +
                 "ID_DIPENDENTE INT PRIMARY KEY, " +
                 "TIPO_CORSO_INSEGNATO VARCHAR(100) NOT NULL, " +
                 "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
                 ");";
 
-        // 14 - NUTRIZIONISTA
+        // 17 - NUTRIZIONISTA
         String sqlNutrizionista = "CREATE TABLE IF NOT EXISTS NUTRIZIONISTA (" +
                 "ID_DIPENDENTE INT PRIMARY KEY, " +
                 "PARCELLA VARCHAR(50), " +
                 "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
                 ");";
 
-        // 15 - MACCHINARIO
+        // 18 - MACCHINARIO
         String sqlMacchinario = "CREATE TABLE IF NOT EXISTS MACCHINARIO (" +
                 "ID_MACCHINARIO INT AUTO_INCREMENT PRIMARY KEY, " +
                 "NOME VARCHAR(100) NOT NULL, " +
@@ -186,7 +218,11 @@ public class InizializzazioneDb {
             stmt.execute(sqlAbbonamentoCorsi);
             stmt.execute(sqlPagamento);
 
-            stmt.execute(sqlDipendente);
+            stmt.execute(sqlDipendente);       // usato da corsi, consulenze, ecc.
+            stmt.execute(sqlCorso);
+            stmt.execute(sqlLezioneCorso);
+            stmt.execute(sqlIscrizioneCorso);
+
             stmt.execute(sqlConsulenza);
             stmt.execute(sqlPersonalTrainer);
             stmt.execute(sqlIstruttoreCorso);
@@ -194,7 +230,7 @@ public class InizializzazioneDb {
             stmt.execute(sqlMacchinario);
 
             // ====== POPOLAMENTO INIZIALE ======
-            popolaDipendenti(conn);  // dipendenti + sottoclassi
+            popolaDipendenti(conn);      // dipendenti + sottoclassi (inclusi istruttori corso)
 
             // --- SALE ---
             if (isTableEmpty(conn, "SALA")) {
@@ -274,6 +310,9 @@ public class InizializzazioneDb {
                                 "('Tapis Roulant', 'Technogym', 150, FALSE, 1)");
             }
 
+            // --- CORSI + LEZIONI DI DEFAULT (coerenti con CorsoDAO) ---
+            popolaCorsiELezioni(conn);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -323,6 +362,124 @@ public class InizializzazioneDb {
                 st.executeUpdate("INSERT INTO ISTRUTTORE_CORSO (ID_DIPENDENTE, TIPO_CORSO_INSEGNATO) VALUES (" + idIs1 + ", 'Spinning')");
                 st.executeUpdate("INSERT INTO ISTRUTTORE_CORSO (ID_DIPENDENTE, TIPO_CORSO_INSEGNATO) VALUES (" + idIs2 + ", 'Pilates')");
                 st.executeUpdate("INSERT INTO ISTRUTTORE_CORSO (ID_DIPENDENTE, TIPO_CORSO_INSEGNATO) VALUES (" + idIs3 + ", 'AcquaGym')");
+            }
+        }
+    }
+
+    // ===== POPOLAMENTO CORSI + LEZIONI =====
+    private static void popolaCorsiELezioni(Connection conn) throws SQLException {
+
+        // --- CORSO ---
+        if (isTableEmpty(conn, "CORSO")) {
+            String sqlInsCorso =
+                    "INSERT INTO CORSO (NOME, DESCRIZIONE, DURATA_MINUTI) VALUES (?, ?, ?)";
+
+            int idSpinning = -1;
+            int idPilates  = -1;
+            int idAcquaGym = -1;
+
+            try (java.sql.PreparedStatement ps =
+                         conn.prepareStatement(sqlInsCorso, Statement.RETURN_GENERATED_KEYS)) {
+
+                // Spinning
+                ps.setString(1, "Spinning");
+                ps.setString(2, "Allenamento cardiovascolare su bike indoor ad alta intensità.");
+                ps.setInt(3, 60);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) idSpinning = rs.getInt(1);
+                }
+
+                // Pilates
+                ps.setString(1, "Pilates");
+                ps.setString(2, "Corso di tonificazione e postura basato su esercizi a corpo libero.");
+                ps.setInt(3, 60);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) idPilates = rs.getInt(1);
+                }
+
+                // AcquaGym
+                ps.setString(1, "AcquaGym");
+                ps.setString(2, "Allenamento aerobico in acqua a basso impatto articolare.");
+                ps.setInt(3, 60);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) idAcquaGym = rs.getInt(1);
+                }
+            }
+
+            // --- LEZIONE_CORSO ---
+            if (isTableEmpty(conn, "LEZIONE_CORSO")) {
+
+                // prendo qualche istruttore di corso
+                int istr1 = -1, istr2 = -1, istr3 = -1;
+                String sqlIstr = "SELECT ID_DIPENDENTE FROM DIPENDENTE " +
+                        "WHERE RUOLO = 'ISTRUTTORE_CORSO' ORDER BY ID_DIPENDENTE";
+
+                try (Statement st = conn.createStatement();
+                     ResultSet rs = st.executeQuery(sqlIstr)) {
+                    if (rs.next()) istr1 = rs.getInt(1);
+                    if (rs.next()) istr2 = rs.getInt(1);
+                    if (rs.next()) istr3 = rs.getInt(1);
+                }
+
+                // fallback nel caso ci siano meno di 3 istruttori
+                int fallback = istr1 != -1 ? istr1 : istr2;
+
+                String sqlInsLez =
+                        "INSERT INTO LEZIONE_CORSO " +
+                        "(ID_CORSO, DATA_LEZIONE, ORA_LEZIONE, POSTI_TOTALI, POSTI_PRENOTATI, ID_ISTRUTTORE) " +
+                        "VALUES (?, ?, ?, ?, 0, ?)";
+
+                try (java.sql.PreparedStatement psL = conn.prepareStatement(sqlInsLez)) {
+
+                    java.time.LocalDate base = java.time.LocalDate.now().plusDays(1);
+
+                    // Spinning - 3 lezioni
+                    if (idSpinning > 0) {
+                        psL.setInt(1, idSpinning);
+                        psL.setDate(2, java.sql.Date.valueOf(base));
+                        psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                        psL.setInt(4, 20);
+                        psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                        psL.executeUpdate();
+
+                        psL.setInt(1, idSpinning);
+                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(2)));
+                        psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                        psL.setInt(4, 20);
+                        psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                        psL.executeUpdate();
+                    }
+
+                    // Pilates - 2 lezioni
+                    if (idPilates > 0) {
+                        psL.setInt(1, idPilates);
+                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(1)));
+                        psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
+                        psL.setInt(4, 15);
+                        psL.setInt(5, istr2 != -1 ? istr2 : fallback);
+                        psL.executeUpdate();
+
+                        psL.setInt(1, idPilates);
+                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(3)));
+                        psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
+                        psL.setInt(4, 15);
+                        psL.setInt(5, istr2 != -1 ? istr2 : fallback);
+                        psL.executeUpdate();
+                    }
+
+                    // AcquaGym - 1 lezione
+                    if (idAcquaGym > 0) {
+                        psL.setInt(1, idAcquaGym);
+                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(4)));
+                        psL.setTime(3, java.sql.Time.valueOf("10:00:00"));
+                        psL.setInt(4, 12);
+                        psL.setInt(5, istr3 != -1 ? istr3 : fallback);
+                        psL.executeUpdate();
+                    }
+                }
             }
         }
     }

@@ -1,22 +1,13 @@
 package controller;
 
 import db.dao.AbbonamentoDAO;
+import db.dao.CorsoDAO;
 import db.dao.ConsulenzaDAO;
-import db.dao.ConsulenzaDAO.ConsulenzaDettaglio;
 import model.Abbonamento;
 import model.Cliente;
-import view.HomeView;
-import view.LoginView;
-import view.PrenotaConsulenzaView;
-import view.SelezionaAbbonamentoView;
-import view.ThemedDialog;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+import view.*;
 
 public class HomeController {
 
@@ -32,84 +23,7 @@ public class HomeController {
         this.view.setController(this);
     }
 
-    /** Apertura schermata prenotazione consulenza (chiude la Home) */
-    public void handlePrenotaConsulenza() {
-        view.dispose(); // chiudo l’area personale
-
-        PrenotaConsulenzaView v = new PrenotaConsulenzaView(cliente);
-        new PrenotaConsulenzaController(v, cliente);
-        v.setVisible(true);
-    }
-
-    /** Mostra tutte le consulenze del cliente (future e passate) */
-    public void handleVediConsulenza() {
-        try {
-            List<ConsulenzaDettaglio> lista =
-                    ConsulenzaDAO.findByCliente(cliente.getIdCliente());
-
-            if (lista.isEmpty()) {
-                view.mostraMessaggioInfo(
-                        "Non hai ancora prenotato alcuna consulenza.");
-                return;
-            }
-
-            LocalDate oggi = LocalDate.now();
-            LocalTime adesso = LocalTime.now();
-
-            StringBuilder futureSb = new StringBuilder();
-            StringBuilder pastSb   = new StringBuilder();
-
-            for (ConsulenzaDettaglio c : lista) {
-                int durata = ConsulenzaDAO.getDurataMinuti(c.tipo);
-                LocalTime fine = c.ora.plusMinutes(durata);
-
-                boolean giaPassata =
-                        c.data.isBefore(oggi) ||
-                        (c.data.isEqual(oggi) && fine.isBefore(adesso));
-
-                String nota = (c.note != null && !c.note.isEmpty())
-                        ? c.note
-                        : "Nessuna nota.";
-
-                String blocco =
-                        "- " + c.data + " ore " + c.ora + "\n" +
-                        "  Tipo: " + c.tipo + "\n" +
-                        "  Professionista: " + c.nomeDipendente +
-                        " (" + c.ruoloDipendente + ")\n" +
-                        "  Durata stimata: " + durata + " minuti\n" +
-                        "  Note: " + nota + "\n\n";
-
-                if (giaPassata) {
-                    pastSb.append(blocco);
-                } else {
-                    futureSb.append(blocco);
-                }
-            }
-
-            StringBuilder testo = new StringBuilder();
-
-            if (futureSb.length() > 0) {
-                testo.append("CONSULENZE FUTURE / PROGRAMMATE\n\n");
-                testo.append(futureSb);
-            }
-
-            if (pastSb.length() > 0) {
-                if (testo.length() > 0) {
-                    testo.append("\n------------------------------\n\n");
-                }
-                testo.append("CONSULENZE PASSATE\n\n");
-                testo.append(pastSb);
-            }
-
-            view.mostraDettaglioConsulenza(testo.toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            view.mostraMessaggioErrore(
-                    "Si è verificato un errore nel caricamento delle consulenze.");
-        }
-    }
-
+    /** Vedi abbonamento attivo */
     public void handleVediAbbonamento() {
         Abbonamento abb = cliente.getAbbonamento();
         if (abb == null) {
@@ -118,22 +32,92 @@ public class HomeController {
                     "Vai nella sezione 'Acquista abbonamento' per sottoscriverne uno.");
             return;
         }
-
         view.mostraDettaglioAbbonamento(abb);
     }
 
-    /** Simulazione prenotazione corsi */
-    public void handlePrenotaCorso() {
-        view.mostraMessaggioInfo(
-                "Funzionalità prenotazione corsi non ancora implementata.\n" +
-                "Nel progetto puoi simulare la prenotazione con un semplice messaggio.");
+    /** Apertura schermata prenotazione consulenza (chiude la Home) */
+    public void handlePrenotaConsulenza() {
+        view.dispose();
+
+        PrenotaConsulenzaView v = new PrenotaConsulenzaView(cliente);
+        new PrenotaConsulenzaController(v, cliente);
+        v.setVisible(true);
     }
 
-    /** Disdetta completa dell’abbonamento e reindirizzamento alla scelta abbonamento */
+    /** Apertura schermata prenotazione corso (solo abbonamento CORSI). */
+    public void handlePrenotaCorso() {
+        // controllo prima che esistano corsi nel DB
+        try {
+            if (!CorsoDAO.esistonoCorsi()) {
+                view.mostraMessaggioErrore(
+                        "Al momento non sono presenti corsi a catalogo.\n" +
+                        "Contatta la palestra per maggiori informazioni.");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore(
+                    "Si è verificato un errore nel caricamento dei corsi.\n" +
+                    "Riprova più tardi.");
+            return;
+        }
+
+        // se ci sono corsi → apro la schermata e chiudo la Home
+        view.dispose();
+
+        PrenotaCorsoView v = new PrenotaCorsoView(cliente);
+        new PrenotaCorsoController(v, cliente);
+        v.setVisible(true);
+    }
+
+    /** Vedi corsi prenotati */
+    public void handleVediCorsi() {
+        try {
+            String testo = CorsoDAO.buildDettaglioIscrizioniPerCliente(cliente.getIdCliente());
+            view.mostraDettaglioCorsi(testo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore("Errore nel caricamento dei corsi prenotati.");
+        }
+    }
+
+    /** Vedi consulenze prenotate */
+    public void handleVediConsulenza() {
+        try {
+            String dettaglio = ConsulenzaDAO.buildDettaglioConsulenzePerCliente(cliente.getIdCliente());
+            view.mostraDettaglioConsulenza(dettaglio);
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore("Errore nel caricamento delle consulenze.");
+        }
+    }
+
+    /** Disdetta abbonamento (bloccata se ci sono consulenze o corsi futuri) */
     public void handleDisdiciAbbonamento() {
         Abbonamento abb = cliente.getAbbonamento();
         if (abb == null) {
             view.mostraMessaggioInfo("Non hai alcun abbonamento attivo da disdire.");
+            return;
+        }
+
+        try {
+            if (ConsulenzaDAO.esistonoConsulenzeFuturePerCliente(cliente.getIdCliente())) {
+                view.mostraMessaggioErrore(
+                        "Non puoi disdire l'abbonamento perché hai consulenze future prenotate.");
+                return;
+            }
+
+            if (CorsoDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
+                view.mostraMessaggioErrore(
+                        "Non puoi disdire l'abbonamento perché hai corsi futuri prenotati.");
+                return;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore(
+                    "Errore nel controllo di consulenze/corsi futuri.\n" +
+                    "Riprova più tardi.");
             return;
         }
 
@@ -143,9 +127,7 @@ public class HomeController {
                 "Sei sicuro di voler disdire l’abbonamento attivo?"
         );
 
-        if (!conferma) {
-            return;
-        }
+        if (!conferma) return;
 
         try {
             AbbonamentoDAO.disdiciAbbonamentoPerUsername(cliente.getUsername());
@@ -174,5 +156,11 @@ public class HomeController {
         LoginView loginView = new LoginView();
         new LoginController(loginView);
         loginView.setVisible(true);
+    }
+
+    /** Apertura dialog disdetta consulenza */
+    public void handleApriDisdettaConsulenza() {
+        DisdiciConsulenzaDialog dialog = new DisdiciConsulenzaDialog(view, cliente);
+        dialog.setVisible(true);
     }
 }
