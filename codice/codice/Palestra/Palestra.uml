@@ -450,6 +450,12 @@
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_8CPxu8e5EfCaM4vwKxGouA" name="vuolePrenotareConsulenza"/>
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_8CPxvMe5EfCaM4vwKxGouA" name="consulenzaFinita"/>
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_8CPxvce5EfCaM4vwKxGouA" name="else"/>
+      <packagedElement xmi:type="uml:Abstraction" xmi:id="_13sSsMlMEfCkvuODshGubA" name="login(user,psw)">
+        <mapping xmi:type="uml:OpaqueExpression" xmi:id="_dpZGMMlNEfCkvuODshGubA" name="OpaqueExpression1">
+          <language>Natural language</language>
+          <body>login(user,psw)</body>
+        </mapping>
+      </packagedElement>
     </packagedElement>
     <packagedElement xmi:type="uml:Actor" xmi:id="_8CPxvse5EfCaM4vwKxGouA" name="Cliente"/>
     <packagedElement xmi:type="uml:Actor" xmi:id="_8CPxv8e5EfCaM4vwKxGouA" name="PersonalTrainer">
@@ -767,8 +773,8 @@
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnIce5EfCElqa4LrZqyA" name="Message23ReceiveEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYwse5EfCaM4vwKxGouA"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnIse5EfCElqa4LrZqyA" name="Message10SendEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYuse5EfCaM4vwKxGouA"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnI8e5EfCElqa4LrZqyA" name="Message10ReceiveEvent" covered="_8CQYtse5EfCaM4vwKxGouA" message="_8CQYuse5EfCaM4vwKxGouA"/>
-      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnJMe5EfCElqa4LrZqyA" name="" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA" interactionOperator="strict">
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnJce5EfCElqa4LrZqyA" name="InteractionOperand0" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnJMe5EfCElqa4LrZqyA" name="" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA" interactionOperator="strict">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnJce5EfCElqa4LrZqyA" name="InteractionOperand0" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNBoAMe5EfCElqa4LrZqyA" name="Message15SendEvent" covered="_8CQYtse5EfCaM4vwKxGouA" message="_8CQYvMe5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNCPEMe5EfCElqa4LrZqyA" name="Message15ReceiveEvent" covered="_8CQYtse5EfCaM4vwKxGouA" message="_8CQYvMe5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNCPEce5EfCElqa4LrZqyA" name="Message16SendEvent" covered="_8CQYtse5EfCaM4vwKxGouA" message="_8CQYvce5EfCaM4vwKxGouA"/>
@@ -781,8 +787,8 @@
       </fragment>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnJse5EfCElqa4LrZqyA" name="Message21SendEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYwMe5EfCaM4vwKxGouA"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnJ8e5EfCElqa4LrZqyA" name="Message21ReceiveEvent" covered="_8CQYtse5EfCaM4vwKxGouA" message="_8CQYwMe5EfCaM4vwKxGouA"/>
-      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnKMe5EfCElqa4LrZqyA" name="" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA" interactionOperator="alt">
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnKce5EfCElqa4LrZqyA" name="InteractionOperand0" visibility="package" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnKMe5EfCElqa4LrZqyA" name="" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA" interactionOperator="alt">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnKce5EfCElqa4LrZqyA" name="InteractionOperand0" visibility="package" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNDdMMe5EfCElqa4LrZqyA" name="Message25SendEvent" covered="_8CQYuce5EfCaM4vwKxGouA" message="_8CQYxMe5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNDdMce5EfCElqa4LrZqyA" name="Message25ReceiveEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYxMe5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_bNDdMse5EfCElqa4LrZqyA" name="BehaviorExecutionSpecification28" covered="_8CQYtce5EfCaM4vwKxGouA" finish="_bNDdM8e5EfCElqa4LrZqyA" start="_bNDdMce5EfCElqa4LrZqyA"/>
@@ -797,7 +803,7 @@
             </specification>
           </guard>
         </operand>
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_PdCWUMe6EfCaM4vwKxGouA" name="InteractionOperand3" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_PdCWUMe6EfCaM4vwKxGouA" name="InteractionOperand3" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuMe5EfCaM4vwKxGouA">
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNC2IMe5EfCElqa4LrZqyA" name="Message28SendEvent" covered="_8CQYuce5EfCaM4vwKxGouA" message="_8CQYxse5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNC2Ice5EfCElqa4LrZqyA" name="Message28ReceiveEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYxse5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNC2Ise5EfCElqa4LrZqyA" name="Message29SendEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYx8e5EfCaM4vwKxGouA"/>
@@ -817,8 +823,8 @@
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnMse5EfCElqa4LrZqyA" name="Message32ReceiveEvent" covered="_8CQYuMe5EfCaM4vwKxGouA" message="_8CQYyse5EfCaM4vwKxGouA"/>
       <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_bNMnM8e5EfCElqa4LrZqyA" name="BehaviorExecutionSpecification35" covered="_8CQYuMe5EfCaM4vwKxGouA" finish="_bNMnNMe5EfCElqa4LrZqyA" start="_bNMnMse5EfCElqa4LrZqyA"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnNMe5EfCElqa4LrZqyA" name="Message37SendEvent" covered="_8CQYuMe5EfCaM4vwKxGouA" message="_8CQYzMe5EfCaM4vwKxGouA"/>
-      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnNce5EfCElqa4LrZqyA" name="CombinedFragment60" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA" interactionOperator="alt">
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnNse5EfCElqa4LrZqyA" name="InteractionOperand0" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA">
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_bNMnNce5EfCElqa4LrZqyA" name="CombinedFragment60" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA" interactionOperator="alt">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_bNMnNse5EfCElqa4LrZqyA" name="InteractionOperand0" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA">
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnOce5EfCElqa4LrZqyA" name="Message61SendEvent" covered="_8CQYt8e5EfCaM4vwKxGouA" message="_8CQYzce5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnOse5EfCElqa4LrZqyA" name="Message61ReceiveEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQYzce5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_bNMnO8e5EfCElqa4LrZqyA" name="BehaviorExecutionSpecification64" covered="_8CQYtce5EfCaM4vwKxGouA" finish="_bNMnPMe5EfCElqa4LrZqyA" start="_bNMnOse5EfCElqa4LrZqyA"/>
@@ -835,7 +841,7 @@
             </specification>
           </guard>
         </operand>
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_VhFjcMe6EfCaM4vwKxGouA" name="InteractionOperand2" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_VhFjcMe6EfCaM4vwKxGouA" name="InteractionOperand2" covered="_8CQYtse5EfCaM4vwKxGouA _8CQYuce5EfCaM4vwKxGouA _8CQYt8e5EfCaM4vwKxGouA _8CQYtce5EfCaM4vwKxGouA">
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnRse5EfCElqa4LrZqyA" name="Message69SendEvent" covered="_8CQYt8e5EfCaM4vwKxGouA" message="_8CQY0ce5EfCaM4vwKxGouA"/>
           <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_bNMnR8e5EfCElqa4LrZqyA" name="Message69ReceiveEvent" covered="_8CQYtce5EfCaM4vwKxGouA" message="_8CQY0ce5EfCaM4vwKxGouA"/>
           <guard xmi:type="uml:InteractionConstraint" xmi:id="_VhGKgMe6EfCaM4vwKxGouA" name="guard"/>
@@ -873,7 +879,209 @@
       <message xmi:type="uml:Message" xmi:id="_8CQY0Me5EfCaM4vwKxGouA" name="mostraAppConAbbonamento" messageSort="reply" receiveEvent="_bNMnQce5EfCElqa4LrZqyA" sendEvent="_bNMnQMe5EfCElqa4LrZqyA"/>
       <message xmi:type="uml:Message" xmi:id="_8CQY0ce5EfCaM4vwKxGouA" name="notificaEsitoNegativo" receiveEvent="_bNMnR8e5EfCElqa4LrZqyA" sendEvent="_bNMnRse5EfCElqa4LrZqyA"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Interaction" xmi:id="_outnEMlIEfCi7O5xBtefgA" name="Interaction55"/>
+    <packagedElement xmi:type="uml:Interaction" xmi:id="_uevW4MlGEfCkvuODshGubA" name="Palestra">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_1IHacMlNEfCkvuODshGubA" name="login(user,psw)">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="_pAGugclHEfCkvuODshGubA" name="login(user,psw)">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_pAGugslHEfCkvuODshGubA">
+            <body>loggedOut</body>
+          </specification>
+        </ownedRule>
+      </ownedOperation>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_Icbn8MlHEfCkvuODshGubA" name="cliente" coveredBy="_pAGugMlHEfCkvuODshGubA _jumGsMlJEfCkvuODshGubA _juoi8MlJEfCkvuODshGubA _yVEn4MlJEfCkvuODshGubA _yVGdGslJEfCkvuODshGubA _9qIboMlJEfCkvuODshGubA _9qJCt8lJEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pAFgYslHEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.LifelineStateDefinitions">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pAFgY8lHEfCkvuODshGubA" key="_pAE5UMlHEfCkvuODshGubA" value="loggedIn"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-w_A48lHEfCkvuODshGubA" key="_-w_A4MlHEfCkvuODshGubA" value="inserisceCredenziali"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_bn1a88lJEfCkvuODshGubA" key="_bn1a8MlJEfCkvuODshGubA" value="loggedIn"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_zBV4A8lJEfCkvuODshGubA" key="_zBV4AMlJEfCkvuODshGubA" value="attesaRisposta"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-lJSY8lJEfCkvuODshGubA" key="_-lJSYMlJEfCkvuODshGubA" value="loggedOut"/>
+        </eAnnotations>
+      </lifeline>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_ikyMsMlOEfCkvuODshGubA" name="applicazione" coveredBy="_7H8kAslPEfCkvuODshGubA _-qKpYMlWEfC8FZ4GeUiYgA _-qOTx8lWEfC8FZ4GeUiYgA _8tdJQMlPEfCkvuODshGubA _8te-d8lPEfCkvuODshGubA _TiNTcMlQEfCkvuODshGubA _TiOhm8lQEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_7H788clPEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.LifelineStateDefinitions">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_7H8kAMlPEfCkvuODshGubA" key="_7H7V4MlPEfCkvuODshGubA" value="mostraHome"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_9RJsM8lPEfCkvuODshGubA" key="_9RJsMMlPEfCkvuODshGubA" value="processingLogIn"/>
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Du0TM8lQEfCkvuODshGubA" key="_Du0TMMlQEfCkvuODshGubA" value="idle"/>
+        </eAnnotations>
+      </lifeline>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_mFc3EMlOEfCkvuODshGubA" name="dataBase" coveredBy="_Yv6HYslQEfCkvuODshGubA _a4qXEMllEfCQFO9DZNUHFg _a4rlNsllEfCQFO9DZNUHFg _aitVMMllEfCQFO9DZNUHFg _aiujUMllEfCQFO9DZNUHFg">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Yv45Q8lQEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.LifelineStateDefinitions">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Yv6HYMlQEfCkvuODshGubA" key="_Yv45QMlQEfCkvuODshGubA" value="active"/>
+        </eAnnotations>
+      </lifeline>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_pAGugMlHEfCkvuODshGubA" name="loggedOut_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pAGug8lHEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pAGuhMlHEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_-lJSYMlJEfCkvuODshGubA"/>
+        </eAnnotations>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_jumGsMlJEfCkvuODshGubA" name="login(user,psw)" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_jumGsclJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_juoi8MlJEfCkvuODshGubA" name="inserisceCredenziali_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_juoi88lJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_juoi9MlJEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_-w_A4MlHEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_juoi8clJEfCkvuODshGubA" name="InState_inserisceCredenziali">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_juoi8slJEfCkvuODshGubA">
+            <body>inserisceCredenziali</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_yVEn4MlJEfCkvuODshGubA" name="inserisceCredenziali_1_To_attesaRisposta_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_yVEn4clJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_yVGdGslJEfCkvuODshGubA" name="attesaRisposta_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_yVGdHclJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_yVGdHslJEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_zBV4AMlJEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_yVGdG8lJEfCkvuODshGubA" name="InState_attesaRisposta">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_yVGdHMlJEfCkvuODshGubA">
+            <body>attesaRisposta</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_9qIboMlJEfCkvuODshGubA" name="attesaRisposta_1_To_loggedIn_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_9qIboclJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_9qJCt8lJEfCkvuODshGubA" name="loggedIn_1" covered="_Icbn8MlHEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_9qJCuslJEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_9qJCu8lJEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_bn1a8MlJEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_9qJCuMlJEfCkvuODshGubA" name="InState_loggedIn">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_9qJCuclJEfCkvuODshGubA">
+            <body>loggedIn</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_7H8kAslPEfCkvuODshGubA" name="idle_1" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_7H9yIMlPEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_7H9yIclPEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_Du0TMMlQEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_7H8kA8lPEfCkvuODshGubA" name="InState_idle">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_7H8kBMlPEfCkvuODshGubA">
+            <body>idle</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_-qKpYMlWEfC8FZ4GeUiYgA" name="idle_1_To_idle_2" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-qKpYclWEfC8FZ4GeUiYgA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_-qOTx8lWEfC8FZ4GeUiYgA" name="idle_2" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-qO60MlWEfC8FZ4GeUiYgA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-qO60clWEfC8FZ4GeUiYgA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_Du0TMMlQEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_-qOTyMlWEfC8FZ4GeUiYgA" name="InState_idle">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_-qOTyclWEfC8FZ4GeUiYgA">
+            <body>idle</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_8tdJQMlPEfCkvuODshGubA" name="idle_2_To_processingLogIn_1" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8tdJQclPEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_8te-d8lPEfCkvuODshGubA" name="processingLogIn_1" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8tflgMlPEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_8tflgclPEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_9RJsMMlPEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_8te-eMlPEfCkvuODshGubA" name="InState_processingLogIn">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_8te-eclPEfCkvuODshGubA">
+            <body>processingLogIn</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_TiNTcMlQEfCkvuODshGubA" name="processingLogIn_1_To_mostraHome_1" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_TiNTcclQEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_TiOhm8lQEfCkvuODshGubA" name="mostraHome_1" covered="_ikyMsMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_TiPvsMlQEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_TiPvsclQEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_7H7V4MlPEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_TiOhnMlQEfCkvuODshGubA" name="InState_mostraHome">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_TiOhnclQEfCkvuODshGubA">
+            <body>mostraHome</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_Yv6HYslQEfCkvuODshGubA" name="active_1" covered="_mFc3EMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Yv6ucMlQEfCkvuODshGubA" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Yv6ucclQEfCkvuODshGubA" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_Yv45QMlQEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_Yv6HY8lQEfCkvuODshGubA" name="InState_active">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_Yv6HZMlQEfCkvuODshGubA">
+            <body>active</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_a4qXEMllEfCQFO9DZNUHFg" name="active_1_To_active_2" covered="_mFc3EMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_a4qXEcllEfCQFO9DZNUHFg" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_a4rlNsllEfCQFO9DZNUHFg" name="active_2" covered="_mFc3EMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_a4rlOcllEfCQFO9DZNUHFg" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_a4rlOsllEfCQFO9DZNUHFg" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_Yv45QMlQEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_a4rlN8llEfCQFO9DZNUHFg" name="InState_active">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_a4rlOMllEfCQFO9DZNUHFg">
+            <body>active</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <fragment xmi:type="uml:OccurrenceSpecification" xmi:id="_aitVMMllEfCQFO9DZNUHFg" name="active_2_To_active_3" covered="_mFc3EMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aitVMcllEfCQFO9DZNUHFg" source="org.eclipse.papyrus.uml.diagram.timing.autogeneratedOccurrenceSpecificationName"/>
+      </fragment>
+      <fragment xmi:type="uml:StateInvariant" xmi:id="_aiujUMllEfCQFO9DZNUHFg" name="active_3" covered="_mFc3EMlOEfCkvuODshGubA">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aiujU8llEfCQFO9DZNUHFg" source="org.eclipse.papyrus.uml.diagram.timing.StateInvariant">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_aiujVMllEfCQFO9DZNUHFg" key="org.eclipse.papyrus.uml.diagram.timing.StateInvariantStateDefinitionId" value="_Yv45QMlQEfCkvuODshGubA"/>
+        </eAnnotations>
+        <invariant xmi:type="uml:Constraint" xmi:id="_aiujUcllEfCQFO9DZNUHFg" name="InState_active">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="_aiujUsllEfCQFO9DZNUHFg">
+            <body>active</body>
+          </specification>
+        </invariant>
+      </fragment>
+      <message xmi:type="uml:Message" xmi:id="_qWPKQMljEfCQFO9DZNUHFg" name="login(user,psw)"/>
+      <message xmi:type="uml:Message" xmi:id="_NNLegMllEfCQFO9DZNUHFg" name="login:&quot;ok&quot;"/>
+      <message xmi:type="uml:Message" xmi:id="_kG3zEMllEfCQFO9DZNUHFg" name="check=&quot;ok&quot;"/>
+      <message xmi:type="uml:Message" xmi:id="_uCnjIMloEfCc-MJeWE0g0w" name="check(user,psw)"/>
+      <message xmi:type="uml:Message" xmi:id="_6onaUMloEfCc-MJeWE0g0w" name="check=&quot;ok&quot;"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:DurationConstraint" xmi:id="_-QLo0MlmEfCc-MJeWE0g0w" constrainedElement="_juoi8MlJEfCkvuODshGubA">
+      <specification xmi:type="uml:DurationInterval" xmi:id="_-QOFEMlmEfCc-MJeWE0g0w" name="1s..5min" max="_-QOFEslmEfCc-MJeWE0g0w" min="_-QOFEclmEfCc-MJeWE0g0w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_-QOFEclmEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_-QOsIMlmEfCc-MJeWE0g0w" value="1s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_-QOFEslmEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_-QOsIclmEfCc-MJeWE0g0w" value="5min"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:DurationConstraint" xmi:id="_kFPJcMlnEfCc-MJeWE0g0w" constrainedElement="_yVGdGslJEfCkvuODshGubA">
+      <specification xmi:type="uml:DurationInterval" xmi:id="_kFQXkMlnEfCc-MJeWE0g0w" name="2s..5s" max="_kFQ-oMlnEfCc-MJeWE0g0w" min="_kFQXkclnEfCc-MJeWE0g0w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_kFQXkclnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_kFQ-oclnEfCc-MJeWE0g0w" value="2s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_kFQ-oMlnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_kFQ-oslnEfCc-MJeWE0g0w" value="5s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_wx1X4clnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_wx1-8clnEfCc-MJeWE0g0w" value="d1"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_wx1-8MlnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_wx1-8slnEfCc-MJeWE0g0w" value="d2"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_0vJiAclnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_0vKwIMlnEfCc-MJeWE0g0w" value="0s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_0vJiAslnEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_0vKwIclnEfCc-MJeWE0g0w" value="2s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:DurationConstraint" xmi:id="_fRl-0MloEfCc-MJeWE0g0w" constrainedElement="_8te-d8lPEfCkvuODshGubA">
+      <specification xmi:type="uml:DurationInterval" xmi:id="_fRml4MloEfCc-MJeWE0g0w" name="0s..2s" max="_fRml4sloEfCc-MJeWE0g0w" min="_fRml4cloEfCc-MJeWE0g0w"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_fRml4cloEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_fRml48loEfCc-MJeWE0g0w" value="0s"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Duration" xmi:id="_fRml4sloEfCc-MJeWE0g0w">
+      <expr xmi:type="uml:LiteralString" xmi:id="_fRml5MloEfCc-MJeWE0g0w" value="2s"/>
+    </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_8CQY0se5EfCaM4vwKxGouA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8CQY08e5EfCaM4vwKxGouA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
