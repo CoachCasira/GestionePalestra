@@ -1,7 +1,8 @@
-package view;
+package view.dialog;
 
-import db.dao.ConsulenzaDAO;
-import db.dao.ConsulenzaDAO.ConsulenzaInfo;
+import db.dao.CorsoDAO;
+import db.dao.CorsoDAO.IscrizioneInfo;
+import view.ThemedDialog;
 import model.Cliente;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class DisdiciConsulenzaDialog extends JDialog {
+public class DisdiciCorsoDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,22 +23,22 @@ public class DisdiciConsulenzaDialog extends JDialog {
 
     private final Cliente cliente;
     private final JFrame parent;
-    private List<ConsulenzaInfo> consulenzeFuture;
+    private List<IscrizioneInfo> iscrizioniFuture;
 
     private JList<String> lista;
     private DefaultListModel<String> listModel;
 
-    public DisdiciConsulenzaDialog(JFrame parent, Cliente cliente) {
-        super(parent, "Disdici consulenza", true);
+    public DisdiciCorsoDialog(JFrame parent, Cliente cliente) {
+        super(parent, "Disdici corso", true);
         this.parent = parent;
         this.cliente = cliente;
 
         initUI();
-        caricaConsulenze();
+        caricaIscrizioni();
     }
 
     private void initUI() {
-        setSize(600, 380);
+        setSize(650, 380);
         setLocationRelativeTo(parent);
         setResizable(false);
 
@@ -51,12 +52,12 @@ public class DisdiciConsulenzaDialog extends JDialog {
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
 
-        JLabel lblTitle = new JLabel("Seleziona una consulenza da disdire");
+        JLabel lblTitle = new JLabel("Seleziona un corso da cui disiscriverti");
         lblTitle.setForeground(ORANGE);
         lblTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblSub = new JLabel("Puoi disdire solo le consulenze con inizio tra almeno 24 ore.");
+        JLabel lblSub = new JLabel("Puoi disdire solo i corsi che iniziano tra almeno 30 minuti.");
         lblSub.setForeground(TEXT_GRAY);
         lblSub.setFont(new Font("SansSerif", Font.PLAIN, 12));
         lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -91,7 +92,7 @@ public class DisdiciConsulenzaDialog extends JDialog {
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
 
-        JButton btnDisdici = creaBottoneArancione("Disdici selezionata");
+        JButton btnDisdici = creaBottoneArancione("Disiscriviti dal corso selezionato");
         JButton btnChiudi  = creaBottoneSoloBordo("Annulla");
 
         btnDisdici.addActionListener(e -> handleDisdici());
@@ -104,25 +105,26 @@ public class DisdiciConsulenzaDialog extends JDialog {
         main.add(footer, BorderLayout.SOUTH);
     }
 
-    private void caricaConsulenze() {
+    private void caricaIscrizioni() {
         try {
-            consulenzeFuture = ConsulenzaDAO.getConsulenzeFuturePerCliente(cliente.getIdCliente());
+            iscrizioniFuture = CorsoDAO.getIscrizioniFuturePerCliente(cliente.getIdCliente());
             listModel.clear();
 
-            // per sicurezza: se non ce ne sono, chiudo il dialog in silenzio
-            if (consulenzeFuture.isEmpty()) {
+            if (iscrizioniFuture.isEmpty()) {
+                ThemedDialog.showMessage(parent,
+                        "Info",
+                        "Non hai corsi futuri da cui disiscriverti.",
+                        false);
                 dispose();
                 return;
             }
 
-            for (ConsulenzaInfo c : consulenzeFuture) {
+            for (IscrizioneInfo i : iscrizioniFuture) {
                 String s = String.format(
-                        "%s %s - %s (%s) - %s",
-                        c.data,
-                        c.ora,
-                        c.nomeDip,
-                        c.ruoloDip,
-                        c.tipo
+                        "%s ore %s - %s (Istruttore: %s)",
+                        i.data, i.ora,
+                        i.nomeCorso,
+                        i.nomeIstruttore
                 );
                 listModel.addElement(s);
             }
@@ -131,14 +133,14 @@ public class DisdiciConsulenzaDialog extends JDialog {
             ex.printStackTrace();
             ThemedDialog.showMessage(parent,
                     "Errore",
-                    "Errore nel caricamento delle consulenze future.",
+                    "Errore nel caricamento dei corsi futuri.",
                     true);
             dispose();
         }
     }
 
     private void handleDisdici() {
-        if (consulenzeFuture == null || consulenzeFuture.isEmpty()) {
+        if (iscrizioniFuture == null || iscrizioniFuture.isEmpty()) {
             dispose();
             return;
         }
@@ -147,32 +149,32 @@ public class DisdiciConsulenzaDialog extends JDialog {
         if (idx < 0) {
             ThemedDialog.showMessage(this,
                     "Errore",
-                    "Seleziona prima una consulenza da disdire.",
+                    "Seleziona prima un corso da cui disiscriverti.",
                     true);
             return;
         }
 
-        ConsulenzaInfo sel = consulenzeFuture.get(idx);
+        IscrizioneInfo sel = iscrizioniFuture.get(idx);
 
-        // controllo 24 ore
+        // controllo 30 minuti prima dell'inizio
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime dataOra = sel.getDataOra();
-        long oreMancanti = Duration.between(now, dataOra).toHours();
+        LocalDateTime inizio = sel.getInizio();
+        long minutiMancanti = Duration.between(now, inizio).toMinutes();
 
-        if (oreMancanti < 24) {
+        if (minutiMancanti < 30) {
             ThemedDialog.showMessage(this,
                     "Impossibile disdire",
-                    "La consulenza selezionata inizia tra meno di 24 ore.\n" +
-                    "Non è più possibile disdirla.",
+                    "Il corso selezionato inizia tra meno di 30 minuti oppure è già iniziato.\n" +
+                    "Non è più possibile disiscriversi.",
                     true);
             return;
         }
 
         boolean conferma = ThemedDialog.showConfirm(
                 this,
-                "Conferma disdetta",
-                "Vuoi davvero disdire la consulenza del " +
-                        sel.data + " alle " + sel.ora + "?"
+                "Conferma disdetta corso",
+                "Vuoi davvero disiscriverti dal corso \"" + sel.nomeCorso +
+                        "\" del " + sel.data + " alle " + sel.ora + "?"
         );
 
         if (!conferma) {
@@ -180,10 +182,10 @@ public class DisdiciConsulenzaDialog extends JDialog {
         }
 
         try {
-            ConsulenzaDAO.disdiciConsulenza(sel.id);
+            CorsoDAO.disiscriviClienteDaLezione(cliente.getIdCliente(), sel.idLezione);
             ThemedDialog.showMessage(this,
                     "Info",
-                    "Consulenza disdetta con successo.",
+                    "Ti sei disiscritto dal corso selezionato.",
                     false);
             dispose();
 
@@ -191,11 +193,12 @@ public class DisdiciConsulenzaDialog extends JDialog {
             ex.printStackTrace();
             ThemedDialog.showMessage(this,
                     "Errore",
-                    "Si è verificato un errore durante la disdetta della consulenza.",
+                    "Si è verificato un errore durante la disiscrizione dal corso.",
                     true);
         }
     }
 
+    // ========= bottoni stilizzati =========
     private JButton creaBottoneArancione(String testo) {
         JButton b = new JButton(testo);
         b.setBackground(ORANGE);

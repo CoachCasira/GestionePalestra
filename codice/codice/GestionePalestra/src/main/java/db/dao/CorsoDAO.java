@@ -68,14 +68,42 @@ public class CorsoDAO {
         }
     }
 
+    // ===================== DTO ISCRIZIONI PER DISDETTA =====================
+    public static class IscrizioneInfo {
+        public final int idLezione;
+        public final int idCorso;
+        public final String nomeCorso;
+        public final LocalDate data;
+        public final LocalTime ora;
+        public final int durataMinuti;
+        public final String nomeIstruttore;
+
+        public IscrizioneInfo(int idLezione,
+                              int idCorso,
+                              String nomeCorso,
+                              LocalDate data,
+                              LocalTime ora,
+                              int durataMinuti,
+                              String nomeIstruttore) {
+            this.idLezione = idLezione;
+            this.idCorso = idCorso;
+            this.nomeCorso = nomeCorso;
+            this.data = data;
+            this.ora = ora;
+            this.durataMinuti = durataMinuti;
+            this.nomeIstruttore = nomeIstruttore;
+        }
+
+        public LocalDateTime getInizio() {
+            return LocalDateTime.of(data, ora);
+        }
+    }
+
     // ===================== CORSI E LEZIONI =====================
 
     /** Restituisce tutti i corsi disponibili. */
     public static List<CorsoInfo> getTuttiICorsi() throws Exception {
-        String sql =
-                "SELECT ID_CORSO, NOME, DESCRIZIONE, DURATA_MINUTI " +
-                "FROM CORSO " +
-                "ORDER BY NOME";
+        String sql = "SELECT ID_CORSO, NOME, DESCRIZIONE, DURATA_MINUTI FROM CORSO ORDER BY NOME";
 
         List<CorsoInfo> result = new ArrayList<>();
 
@@ -169,10 +197,8 @@ public class CorsoDAO {
                     LocalTime oraEsistente  = rs.getTime("ORA_LEZIONE").toLocalTime();
                     int durataEsistente     = rs.getInt("DURATA_MINUTI");
 
-                    LocalDateTime inizioEsistente =
-                            LocalDateTime.of(dataEsistente, oraEsistente);
-                    LocalDateTime fineEsistente =
-                            inizioEsistente.plusMinutes(durataEsistente);
+                    LocalDateTime inizioEsistente = LocalDateTime.of(dataEsistente, oraEsistente);
+                    LocalDateTime fineEsistente   = inizioEsistente.plusMinutes(durataEsistente);
 
                     boolean overlap =
                             !inizioNuovo.isAfter(fineEsistente) &&
@@ -190,10 +216,7 @@ public class CorsoDAO {
 
     /** Controlla se la lezione ha ancora posti liberi. */
     public static boolean haPostiDisponibili(int idLezione) throws Exception {
-        String sql =
-                "SELECT POSTI_TOTALI, POSTI_PRENOTATI " +
-                "FROM LEZIONE_CORSO " +
-                "WHERE ID_LEZIONE = ?";
+        String sql = "SELECT POSTI_TOTALI, POSTI_PRENOTATI FROM LEZIONE_CORSO WHERE ID_LEZIONE = ?";
 
         try (Connection conn = GestioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -211,19 +234,15 @@ public class CorsoDAO {
 
     /**
      * Iscrive un cliente ad una lezione:
-     * - controlla i posti (row-lock con FOR UPDATE)
+     * - controlla i posti
      * - incrementa POSTI_PRENOTATI
      * - inserisce in ISCRIZIONE_CORSO
      */
     public static void iscriviClienteALezione(int idCliente, int idLezione) throws Exception {
         String sqlCheck =
-                "SELECT POSTI_TOTALI, POSTI_PRENOTATI " +
-                "FROM LEZIONE_CORSO " +
-                "WHERE ID_LEZIONE = ? FOR UPDATE";
+                "SELECT POSTI_TOTALI, POSTI_PRENOTATI FROM LEZIONE_CORSO WHERE ID_LEZIONE = ? FOR UPDATE";
         String sqlUpdate =
-                "UPDATE LEZIONE_CORSO " +
-                "SET POSTI_PRENOTATI = POSTI_PRENOTATI + 1 " +
-                "WHERE ID_LEZIONE = ?";
+                "UPDATE LEZIONE_CORSO SET POSTI_PRENOTATI = POSTI_PRENOTATI + 1 WHERE ID_LEZIONE = ?";
         String sqlInsert =
                 "INSERT INTO ISCRIZIONE_CORSO (ID_CLIENTE, ID_LEZIONE) VALUES (?, ?)";
 
@@ -257,6 +276,103 @@ public class CorsoDAO {
                 psIns.setInt(1, idCliente);
                 psIns.setInt(2, idLezione);
                 psIns.executeUpdate();
+
+                conn.commit();
+            } catch (Exception ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    // ===================== DISISCRIZIONE CORSI =====================
+
+    /** Restituisce le iscrizioni future di un cliente (usato dal dialog di disdetta). */
+    public static List<IscrizioneInfo> getIscrizioniFuturePerCliente(int idCliente) throws Exception {
+        String sql =
+                "SELECT L.ID_LEZIONE, L.ID_CORSO, L.DATA_LEZIONE, L.ORA_LEZIONE, " +
+                "       C.NOME AS NOME_CORSO, C.DURATA_MINUTI, " +
+                "       D.NOME, D.COGNOME " +
+                "FROM ISCRIZIONE_CORSO I " +
+                "JOIN LEZIONE_CORSO L ON I.ID_LEZIONE = L.ID_LEZIONE " +
+                "JOIN CORSO C ON L.ID_CORSO = C.ID_CORSO " +
+                "JOIN DIPENDENTE D ON L.ID_ISTRUTTORE = D.ID_DIPENDENTE " +
+                "WHERE I.ID_CLIENTE = ? AND L.DATA_LEZIONE >= ? " +
+                "ORDER BY L.DATA_LEZIONE, L.ORA_LEZIONE";
+
+        List<IscrizioneInfo> result = new ArrayList<>();
+
+        try (Connection conn = GestioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+            ps.setDate(2, Date.valueOf(LocalDate.now()));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int idLezione = rs.getInt("ID_LEZIONE");
+                    int idCorso   = rs.getInt("ID_CORSO");
+                    LocalDate data = rs.getDate("DATA_LEZIONE").toLocalDate();
+                    LocalTime ora  = rs.getTime("ORA_LEZIONE").toLocalTime();
+                    int durata = rs.getInt("DURATA_MINUTI");
+                    String nomeCorso = rs.getString("NOME_CORSO");
+                    String nomeIstr = rs.getString("NOME") + " " + rs.getString("COGNOME");
+
+                    result.add(new IscrizioneInfo(
+                            idLezione, idCorso, nomeCorso,
+                            data, ora, durata, nomeIstr
+                    ));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Disiscrive un cliente da una lezione:
+     * - decrementa POSTI_PRENOTATI
+     * - elimina riga da ISCRIZIONE_CORSO
+     */
+    public static void disiscriviClienteDaLezione(int idCliente, int idLezione) throws Exception {
+        String sqlCheck =
+                "SELECT POSTI_PRENOTATI FROM LEZIONE_CORSO WHERE ID_LEZIONE = ? FOR UPDATE";
+        String sqlUpdate =
+                "UPDATE LEZIONE_CORSO SET POSTI_PRENOTATI = POSTI_PRENOTATI - 1 WHERE ID_LEZIONE = ?";
+        String sqlDelete =
+                "DELETE FROM ISCRIZIONE_CORSO WHERE ID_CLIENTE = ? AND ID_LEZIONE = ?";
+
+        try (Connection conn = GestioneDB.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psCheck = conn.prepareStatement(sqlCheck);
+                 PreparedStatement psUpd   = conn.prepareStatement(sqlUpdate);
+                 PreparedStatement psDel   = conn.prepareStatement(sqlDelete)) {
+
+                // controllo che ci sia almeno un iscritto
+                psCheck.setInt(1, idLezione);
+                try (ResultSet rs = psCheck.executeQuery()) {
+                    if (!rs.next()) {
+                        conn.rollback();
+                        throw new Exception("Lezione inesistente.");
+                    }
+                    int pren = rs.getInt("POSTI_PRENOTATI");
+                    if (pren <= 0) {
+                        conn.rollback();
+                        throw new Exception("Nessuna iscrizione da rimuovere per questa lezione.");
+                    }
+                }
+
+                // decremento contatore posti
+                psUpd.setInt(1, idLezione);
+                psUpd.executeUpdate();
+
+                // rimozione iscrizione
+                psDel.setInt(1, idCliente);
+                psDel.setInt(2, idLezione);
+                psDel.executeUpdate();
 
                 conn.commit();
             } catch (Exception ex) {
@@ -321,8 +437,6 @@ public class CorsoDAO {
         return sb.toString();
     }
 
-    // ===================== VARI UTILI =====================
-
     /** Ritorna true se esiste almeno un corso nel catalogo. */
     public static boolean esistonoCorsi() throws Exception {
         String sql = "SELECT COUNT(*) FROM CORSO";
@@ -339,8 +453,7 @@ public class CorsoDAO {
     /** Ritorna true se il cliente ha almeno una iscrizione futura. */
     public static boolean esistonoIscrizioniFuturePerCliente(int idCliente) throws Exception {
         String sql =
-                "SELECT COUNT(*) " +
-                "FROM ISCRIZIONE_CORSO I " +
+                "SELECT COUNT(*) FROM ISCRIZIONE_CORSO I " +
                 "JOIN LEZIONE_CORSO L ON I.ID_LEZIONE = L.ID_LEZIONE " +
                 "WHERE I.ID_CLIENTE = ? AND L.DATA_LEZIONE >= ?";
 

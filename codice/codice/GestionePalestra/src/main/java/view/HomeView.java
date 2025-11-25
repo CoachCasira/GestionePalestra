@@ -432,14 +432,27 @@ public class HomeView extends JFrame {
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
 
-        JButton btnChiudi = creaBottoneSoloBordo("Chiudi");
+        JButton btnDisdici = creaBottoneSoloBordo("Disiscriviti da un corso...");
+        JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
+
+        btnDisdici.addActionListener(e -> {
+            if (controller != null) {
+                dialog.dispose();
+                controller.handleApriDisdettaCorso();
+            }
+        });
+
         btnChiudi.addActionListener(e -> dialog.dispose());
+
+        footer.add(btnDisdici);
+        footer.add(Box.createHorizontalStrut(15));
         footer.add(btnChiudi);
 
         main.add(footer, BorderLayout.SOUTH);
 
         dialog.setVisible(true);
     }
+
 
     // =================== messaggi info/errore ===================
     public void mostraMessaggioInfo(String msg) {

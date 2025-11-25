@@ -7,6 +7,7 @@ import model.Abbonamento;
 import model.Cliente;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import view.dialog.*;
 import view.*;
 
 public class HomeController {
@@ -23,18 +24,6 @@ public class HomeController {
         this.view.setController(this);
     }
 
-    /** Vedi abbonamento attivo */
-    public void handleVediAbbonamento() {
-        Abbonamento abb = cliente.getAbbonamento();
-        if (abb == null) {
-            view.mostraMessaggioInfo(
-                    "Non hai ancora un abbonamento attivo.\n" +
-                    "Vai nella sezione 'Acquista abbonamento' per sottoscriverne uno.");
-            return;
-        }
-        view.mostraDettaglioAbbonamento(abb);
-    }
-
     /** Apertura schermata prenotazione consulenza (chiude la Home) */
     public void handlePrenotaConsulenza() {
         view.dispose();
@@ -46,7 +35,6 @@ public class HomeController {
 
     /** Apertura schermata prenotazione corso (solo abbonamento CORSI). */
     public void handlePrenotaCorso() {
-        // controllo prima che esistano corsi nel DB
         try {
             if (!CorsoDAO.esistonoCorsi()) {
                 view.mostraMessaggioErrore(
@@ -62,12 +50,24 @@ public class HomeController {
             return;
         }
 
-        // se ci sono corsi → apro la schermata e chiudo la Home
         view.dispose();
 
         PrenotaCorsoView v = new PrenotaCorsoView(cliente);
         new PrenotaCorsoController(v, cliente);
         v.setVisible(true);
+    }
+
+    /** Vedi dettaglio abbonamento. */
+    public void handleVediAbbonamento() {
+        Abbonamento abb = cliente.getAbbonamento();
+        if (abb == null) {
+            view.mostraMessaggioInfo(
+                    "Non hai ancora un abbonamento attivo.\n" +
+                    "Vai nella sezione 'Acquista abbonamento' per sottoscriverne uno.");
+            return;
+        }
+
+        view.mostraDettaglioAbbonamento(abb);
     }
 
     /** Vedi corsi prenotati */
@@ -161,6 +161,12 @@ public class HomeController {
     /** Apertura dialog disdetta consulenza */
     public void handleApriDisdettaConsulenza() {
         DisdiciConsulenzaDialog dialog = new DisdiciConsulenzaDialog(view, cliente);
+        dialog.setVisible(true);
+    }
+
+    /** Apertura dialog disdetta corso */
+    public void handleApriDisdettaCorso() {
+        DisdiciCorsoDialog dialog = new DisdiciCorsoDialog(view, cliente);
         dialog.setVisible(true);
     }
 }
