@@ -11,10 +11,8 @@ public class RegistrazioneView extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    // stesso path usato nella LoginView
     private static final String LOGO_PATH = "/immagini/logo.png";
 
-    // palette colori (come LoginView)
     private static final Color DARK_BG   = new Color(20, 20, 20);
     private static final Color CARD_BG   = new Color(30, 30, 30);
     private static final Color ORANGE    = new Color(255, 140, 0);
@@ -23,12 +21,13 @@ public class RegistrazioneView extends JFrame {
 
     private JTextField txtUsername;
     private JPasswordField txtPassword;
+    private JTextField txtEmail;
     private JTextField txtNome;
     private JTextField txtCognome;
     private JTextField txtCF;
     private JTextField txtLuogoNascita;
     private JTextField txtIban;
-    private JTextField txtDataNascita; // String (yyyy-MM-dd)
+    private JTextField txtDataNascita;
 
     private JButton btnConferma;
     private JButton btnAnnulla;
@@ -42,7 +41,7 @@ public class RegistrazioneView extends JFrame {
     private void initUI() {
         setTitle("Registrazione nuovo cliente");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(420, 650);           // stessa logica "telefono" come login
+        setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -50,7 +49,6 @@ public class RegistrazioneView extends JFrame {
         mainPanel.setBackground(DARK_BG);
         setContentPane(mainPanel);
 
-        // ---------------- HEADER: logo + titoli ----------------
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setBackground(DARK_BG);
@@ -79,12 +77,10 @@ public class RegistrazioneView extends JFrame {
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // ---------------- CONTENUTO SCORRIBILE ----------------
         JPanel scrollContent = new JPanel();
         scrollContent.setLayout(new BoxLayout(scrollContent, BoxLayout.Y_AXIS));
         scrollContent.setBackground(DARK_BG);
 
-        // CARD con il form
         JPanel cardPanel = new JPanel(new GridBagLayout());
         cardPanel.setBackground(CARD_BG);
         cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
@@ -98,7 +94,6 @@ public class RegistrazioneView extends JFrame {
 
         int row = 0;
 
-        // Username
         JLabel lblUsername = creaLabelCampo("Username");
         txtUsername = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -106,7 +101,13 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtUsername, gbc);
 
-        // Password
+        JLabel lblEmail = creaLabelCampo("Email");
+        txtEmail = creaTextField();
+        gbc.gridx = 0; gbc.gridy = row++;
+        cardPanel.add(lblEmail, gbc);
+        gbc.gridx = 0; gbc.gridy = row++;
+        cardPanel.add(txtEmail, gbc);
+
         JLabel lblPassword = creaLabelCampo("Password");
         txtPassword = new JPasswordField(20);
         styleField(txtPassword);
@@ -115,7 +116,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtPassword, gbc);
 
-        // Nome
         JLabel lblNome = creaLabelCampo("Nome");
         txtNome = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -123,7 +123,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtNome, gbc);
 
-        // Cognome
         JLabel lblCognome = creaLabelCampo("Cognome");
         txtCognome = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -131,7 +130,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtCognome, gbc);
 
-        // CF
         JLabel lblCF = creaLabelCampo("Codice fiscale");
         txtCF = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -139,7 +137,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtCF, gbc);
 
-        // Luogo nascita
         JLabel lblLuogo = creaLabelCampo("Luogo di nascita");
         txtLuogoNascita = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -147,7 +144,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtLuogoNascita, gbc);
 
-        // Data nascita
         JLabel lblData = creaLabelCampo("Data di nascita (yyyy-MM-dd)");
         txtDataNascita = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -155,7 +151,6 @@ public class RegistrazioneView extends JFrame {
         gbc.gridx = 0; gbc.gridy = row++;
         cardPanel.add(txtDataNascita, gbc);
 
-        // IBAN
         JLabel lblIban = creaLabelCampo("IBAN");
         txtIban = creaTextField();
         gbc.gridx = 0; gbc.gridy = row++;
@@ -166,7 +161,6 @@ public class RegistrazioneView extends JFrame {
         scrollContent.add(cardPanel);
         scrollContent.add(Box.createVerticalStrut(15));
 
-        // BOTTONI (sempre dentro al contenuto scrollabile)
         btnConferma = creaBottoneArancione("Conferma");
         btnAnnulla  = creaBottoneSoloBordo("Annulla");
 
@@ -192,7 +186,6 @@ public class RegistrazioneView extends JFrame {
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // FOOTER
         JLabel lblFooter = new JLabel(
                 "I dati inseriti saranno trattati secondo l'informativa privacy.",
                 SwingConstants.CENTER);
@@ -205,12 +198,9 @@ public class RegistrazioneView extends JFrame {
         footerPanel.add(lblFooter, BorderLayout.CENTER);
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
-        // Listener bottoni
         btnConferma.addActionListener(e -> onConfermaClicked());
         btnAnnulla.addActionListener(e -> onAnnullaClicked());
     }
-
-    // ---------------- util grafici ----------------
 
     private JLabel creaLabelCampo(String testo) {
         JLabel l = new JLabel(testo);
@@ -251,16 +241,9 @@ public class RegistrazioneView extends JFrame {
         b.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
-
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE_HO);
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(ORANGE_HO); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(ORANGE); }
         });
         return b;
     }
@@ -275,21 +258,12 @@ public class RegistrazioneView extends JFrame {
         b.setBorder(BorderFactory.createLineBorder(ORANGE));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
-
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(new Color(40, 40, 40));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(DARK_BG);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(new Color(40,40,40)); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(DARK_BG); }
         });
         return b;
     }
-
-    // ---------------- controller & callback ----------------
 
     public void setController(RegistrazioneController controller) {
         this.controller = controller;
@@ -301,24 +275,24 @@ public class RegistrazioneView extends JFrame {
             return;
         }
 
-        String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword());
-        String nome = txtNome.getText().trim();
-        String cognome = txtCognome.getText().trim();
-        String cf = txtCF.getText().trim();
+        String username     = txtUsername.getText().trim();
+        String password     = new String(txtPassword.getPassword());
+        String email        = txtEmail.getText().trim();
+        String nome         = txtNome.getText().trim();
+        String cognome      = txtCognome.getText().trim();
+        String cf           = txtCF.getText().trim();
         String luogoNascita = txtLuogoNascita.getText().trim();
-        String dataNascita = txtDataNascita.getText().trim();
-        String iban = txtIban.getText().trim();
+        String dataNascita  = txtDataNascita.getText().trim();
+        String iban         = txtIban.getText().trim();
 
         controller.handleConferma(username, password, nome, cognome,
-                cf, luogoNascita, dataNascita, iban);
+                cf, luogoNascita, dataNascita, iban, email);
     }
 
     private void onAnnullaClicked() {
         if (controller != null) {
             controller.handleAnnulla();
         } else {
-            // fallback di sicurezza
             dispose();
         }
     }
@@ -330,5 +304,4 @@ public class RegistrazioneView extends JFrame {
     public void mostraMessaggioErrore(String msg) {
         ThemedDialog.showMessage(this, "Errore", msg, true);
     }
-
 }

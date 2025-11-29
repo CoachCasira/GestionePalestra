@@ -26,7 +26,8 @@ public class ClienteSottoscriviAbbonamentoTest {
                 "RSSMRA00A01H501U",     // codice fiscale
                 "Bergamo",             // luogo nascita
                 java.sql.Date.valueOf("2000-01-01"), // data nascita
-                "IT99A010000324569"     // IBAN
+                "IT99A010000324569" ,    // IBAN
+                "cmatteo453@gmail.com"
         );
     }
 
