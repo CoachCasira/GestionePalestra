@@ -1,10 +1,9 @@
 package db.dao;
 
+import db.GestioneDB;
 import model.Abbonamento;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import db.GestioneDB;
 
 import java.sql.*;
 import java.util.Date;
@@ -14,92 +13,141 @@ public class AbbonamentoDAO {
     private static final Logger logger =
             LogManager.getLogger(AbbonamentoDAO.class);
 
+    // ===================== SQL =====================
+
+    private static final String SQL_SELECT_ABBONAMENTO_BY_CLIENTE =
+            "SELECT ID_ABBONAMENTO, TIPO, SCADENZA, " +
+            "       FASCIA_ORARIA_CONSENTITA, PREZZO " +
+            "FROM ABBONAMENTO " +
+            "WHERE ID_CLIENTE = ?";
+
+    private static final String SQL_INSERT_ABBONAMENTO =
+            "INSERT INTO ABBONAMENTO " +
+            "(TIPO, SCADENZA, ID_SPOGLIATOIO, ID_CLIENTE, " +
+            " FASCIA_ORARIA_CONSENTITA, PREZZO) " +
+            "VALUES (?, ?, NULL, ?, ?, ?)";
+
+    private static final String SQL_DELETE_ISCRIZIONI_CORSO =
+            "DELETE FROM ISCRIZIONE_CORSO WHERE ID_CLIENTE = ?";
+
+    private static final String SQL_DELETE_CONSULENZE =
+            "DELETE FROM CONSULENZA WHERE ID_CLIENTE = ?";
+
+    private static final String SQL_DELETE_PAGAMENTI =
+            "DELETE FROM PAGAMENTO " +
+            "WHERE ID_CLIENTE = ? " +
+            "AND ID_ABBONAMENTO IN (" +
+            "    SELECT ID_ABBONAMENTO FROM ABBONAMENTO WHERE ID_CLIENTE = ?" +
+            ")";
+
+    private static final String SQL_DELETE_ABBONAMENTI =
+            "DELETE FROM ABBONAMENTO WHERE ID_CLIENTE = ?";
+
+    private static final String SQL_SELECT_IDCLIENTE_BY_USERNAME =
+            "SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?";
+
+    // ==========================================================
+    //                   LETTURA ABBONAMENTO
+    // ==========================================================
+
     /**
      * Restituisce l'abbonamento associato a un cliente (se esiste),
      * altrimenti null.
-     *
-     * Usa la colonna TIPO della tabella ABBONAMENTO (BASICO / COMPLETO / CORSI),
-     * non il prefisso dell'ID.
      */
     public static Abbonamento getAbbonamentoByClienteId(int idCliente) {
-        String sql =
-                "SELECT ID_ABBONAMENTO, TIPO, SCADENZA, " +
-                "       FASCIA_ORARIA_CONSENTITA, PREZZO " +
-                "FROM ABBONAMENTO " +
-                "WHERE ID_CLIENTE = ?";
-
         try (Connection conn = GestioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_ABBONAMENTO_BY_CLIENTE)) {
 
             ps.setInt(1, idCliente);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-
-                    int idAbbonamentoInt = rs.getInt("ID_ABBONAMENTO");
-                    String tipo = rs.getString("TIPO");   // BASICO / COMPLETO / CORSI
-
-                    Date scadenza =
-                            rs.getDate("SCADENZA") != null
-                                    ? new Date(rs.getDate("SCADENZA").getTime())
-                                    : null;
-                    String fascia = rs.getString("FASCIA_ORARIA_CONSENTITA");
-                    int prezzo = rs.getInt("PREZZO");
-
-                    // Crea la sottoclasse giusta a partire dal tipo
-                    Abbonamento abbonamento = Abbonamento.creaDaTipo(tipo, idCliente);
-                    if (abbonamento == null) {
-                        logger.warn("Tipo abbonamento sconosciuto '{}' per cliente {}: ritorno null",
-                                tipo, idCliente);
-                        return null;
-                    }
-
-                    // ID auto-increment (in DB è INT, nel model lo salviamo come String)
-                    abbonamento.setIdAbbonamento(String.valueOf(idAbbonamentoInt));
-                    abbonamento.setPrezzo(prezzo);
-                    abbonamento.setFasciaOrariaConsentita(fascia);
-                    abbonamento.setScadenza(scadenza);
-
-                    return abbonamento;
+                if (!rs.next()) {
+                    return null;
                 }
+                return creaAbbonamentoDaResultSet(rs, idCliente);
             }
 
         } catch (SQLException e) {
             logger.error("Errore nel recupero abbonamento per cliente {}", idCliente, e);
+            return null;
+        }
+    }
+
+    private static Abbonamento creaAbbonamentoDaResultSet(ResultSet rs,
+                                                          int idCliente) throws SQLException {
+        int idAbbonamentoInt = rs.getInt("ID_ABBONAMENTO");
+        String tipo          = rs.getString("TIPO");
+        Date scadenza        = leggiScadenza(rs);
+        String fascia        = rs.getString("FASCIA_ORARIA_CONSENTITA");
+        int prezzo           = rs.getInt("PREZZO");
+
+        Abbonamento abbonamento = Abbonamento.creaDaTipo(tipo, idCliente);
+        if (abbonamento == null) {
+            logger.warn("Tipo abbonamento sconosciuto '{}' per cliente {}: ritorno null",
+                    tipo, idCliente);
+            return null;
         }
 
-        return null;
+        abbonamento.setIdAbbonamento(String.valueOf(idAbbonamentoInt));
+        abbonamento.setPrezzo(prezzo);
+        abbonamento.setFasciaOrariaConsentita(fascia);
+        abbonamento.setScadenza(scadenza);
+
+        return abbonamento;
     }
+
+    private static Date leggiScadenza(ResultSet rs) throws SQLException {
+        java.sql.Date sqlDate = rs.getDate("SCADENZA");
+        if (sqlDate == null) {
+            return null;
+        }
+        return new Date(sqlDate.getTime());
+    }
+
+    // ==========================================================
+    //                   SALVATAGGIO ABBONAMENTO
+    // ==========================================================
 
     /**
      * Salva su DB un nuovo abbonamento associato a un cliente.
      * Usa ID_ABBONAMENTO INT AUTO_INCREMENT generato dal database.
      */
     public static void salvaAbbonamento(Abbonamento abbonamento, int idCliente) {
-        if (abbonamento == null) {
+        if (!isAbbonamentoValido(abbonamento, idCliente)) {
             return;
         }
 
-        // Il tipo deve essere qualcosa come "BASICO", "COMPLETO", "CORSI"
+        String tipo = abbonamento.getTipo();
+
+        try (Connection conn = GestioneDB.getConnection()) {
+            inserisciAbbonamento(conn, abbonamento, idCliente, tipo);
+        } catch (SQLException e) {
+            logger.error("Errore nel salvataggio abbonamento per cliente {}", idCliente, e);
+        }
+    }
+
+    private static boolean isAbbonamentoValido(Abbonamento abbonamento, int idCliente) {
+        if (abbonamento == null) {
+            logger.warn("Tentativo di salvare un abbonamento null per cliente {}", idCliente);
+            return false;
+        }
         String tipo = abbonamento.getTipo();
         if (tipo == null || tipo.isEmpty()) {
             logger.warn("Tentativo di salvare un abbonamento senza tipo per cliente {}", idCliente);
-            return;
+            return false;
         }
+        return true;
+    }
 
-        String sql =
-                "INSERT INTO ABBONAMENTO " +
-                "(TIPO, SCADENZA, ID_SPOGLIATOIO, ID_CLIENTE, " +
-                " FASCIA_ORARIA_CONSENTITA, PREZZO) " +
-                "VALUES (?, ?, NULL, ?, ?, ?)";
+    private static void inserisciAbbonamento(Connection conn,
+                                             Abbonamento abbonamento,
+                                             int idCliente,
+                                             String tipo) throws SQLException {
 
-        try (Connection conn = GestioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = conn.prepareStatement(
+                SQL_INSERT_ABBONAMENTO, Statement.RETURN_GENERATED_KEYS)) {
 
-            java.sql.Date dataSql = null;
-            if (abbonamento.getScadenza() != null) {
-                dataSql = new java.sql.Date(abbonamento.getScadenza().getTime());
-            }
+            java.sql.Date dataSql = buildSqlDate(abbonamento.getScadenza());
 
             ps.setString(1, tipo);
             ps.setDate(2, dataSql);
@@ -108,72 +156,58 @@ public class AbbonamentoDAO {
             ps.setInt(5, abbonamento.getPrezzo());
 
             int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        int idGen = rs.getInt(1);
-                        abbonamento.setIdAbbonamento(String.valueOf(idGen));
-                        logger.info("Abbonamento {} (tipo {}) salvato per cliente {}",
-                                idGen, tipo, idCliente);
-                    }
-                }
-            } else {
-                logger.warn("Nessun abbonamento salvato per cliente {}", idCliente);
-            }
-
-        } catch (SQLException e) {
-            logger.error("Errore nel salvataggio abbonamento per cliente {}", idCliente, e);
+            gestisciRisultatoInsert(ps, abbonamento, idCliente, tipo, rows);
         }
     }
 
+    private static java.sql.Date buildSqlDate(Date data) {
+        if (data == null) {
+            return null;
+        }
+        return new java.sql.Date(data.getTime());
+    }
+
+    private static void gestisciRisultatoInsert(PreparedStatement ps,
+                                                Abbonamento abbonamento,
+                                                int idCliente,
+                                                String tipo,
+                                                int rows) throws SQLException {
+        if (rows <= 0) {
+            logger.warn("Nessun abbonamento salvato per cliente {}", idCliente);
+            return;
+        }
+
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (!rs.next()) {
+                logger.warn("Abbonamento salvato per cliente {}, ma nessun ID generato trovato",
+                        idCliente);
+                return;
+            }
+
+            int idGen = rs.getInt(1);
+            abbonamento.setIdAbbonamento(String.valueOf(idGen));
+
+            logger.info("Abbonamento {} (tipo {}) salvato per cliente {}",
+                    idGen, tipo, idCliente);
+        }
+    }
+
+    // ==========================================================
+    //                   DISDETTA ABBONAMENTO
+    // ==========================================================
+
     /**
-     * Disdice l'abbonamento di un cliente / ID_CLIENTE esplicito.
-     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze
-     * collegate a quel cliente.
+     * Disdice l'abbonamento di un cliente (ID_CLIENTE).
+     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze collegate.
      */
     public static void disdiciAbbonamentoPerCliente(int idCliente) {
 
-        // elimina iscrizioni corsi del cliente
-        String sqlDeleteIscrizioniCorsi =
-                "DELETE FROM ISCRIZIONE_CORSO WHERE ID_CLIENTE = ?";
-
-        // elimina consulenze del cliente
-        String sqlDeleteConsulenze =
-                "DELETE FROM CONSULENZA WHERE ID_CLIENTE = ?";
-
-        // elimina pagamenti legati ai suoi abbonamenti
-        String sqlDeletePagamenti =
-                "DELETE FROM PAGAMENTO WHERE ID_CLIENTE = ? " +
-                "AND ID_ABBONAMENTO IN (SELECT ID_ABBONAMENTO FROM ABBONAMENTO WHERE ID_CLIENTE = ?)";
-
-        // elimina abbonamenti del cliente
-        String sqlDeleteAbbonamenti =
-                "DELETE FROM ABBONAMENTO WHERE ID_CLIENTE = ?";
-
         try (Connection conn = GestioneDB.getConnection()) {
-            conn.setAutoCommit(false);
 
-            try (PreparedStatement psCorsi = conn.prepareStatement(sqlDeleteIscrizioniCorsi);
-                 PreparedStatement psCons  = conn.prepareStatement(sqlDeleteConsulenze);
-                 PreparedStatement ps1     = conn.prepareStatement(sqlDeletePagamenti);
-                 PreparedStatement ps2     = conn.prepareStatement(sqlDeleteAbbonamenti)) {
+            try {
+                conn.setAutoCommit(false);
 
-                // 1) cancello tutte le iscrizioni ai corsi del cliente
-                psCorsi.setInt(1, idCliente);
-                psCorsi.executeUpdate();
-
-                // 2) cancello tutte le consulenze del cliente
-                psCons.setInt(1, idCliente);
-                psCons.executeUpdate();
-
-                // 3) cancello i pagamenti legati ai suoi abbonamenti
-                ps1.setInt(1, idCliente);
-                ps1.setInt(2, idCliente);
-                ps1.executeUpdate();
-
-                // 4) cancello gli abbonamenti del cliente
-                ps2.setInt(1, idCliente);
-                ps2.executeUpdate();
+                eseguiDisdettaAbbonamento(conn, idCliente);
 
                 conn.commit();
                 logger.info("Abbonamento, pagamenti, corsi e consulenze disdetti per cliente {}",
@@ -193,79 +227,81 @@ public class AbbonamentoDAO {
 
     /**
      * Disdice l'abbonamento partendo dall'USERNAME del cliente.
-     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze
-     * collegate a quel cliente.
+     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze collegate.
      */
     public static void disdiciAbbonamentoPerUsername(String username) {
 
-        // elimina iscrizioni ai corsi del cliente
-        String sqlDeleteIscrizioniCorsi =
-                "DELETE FROM ISCRIZIONE_CORSO " +
-                "WHERE ID_CLIENTE IN (" +
-                "   SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?" +
-                ")";
+        Integer idCliente = getIdClienteByUsername(username);
+        if (idCliente == null) {
+            logger.warn("Nessun cliente trovato per username {} in disdiciAbbonamentoPerUsername",
+                    username);
+            return;
+        }
 
-        // elimina consulenze del cliente
-        String sqlDeleteConsulenze =
-                "DELETE FROM CONSULENZA " +
-                "WHERE ID_CLIENTE IN (" +
-                "   SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?" +
-                ")";
+        disdiciAbbonamentoPerCliente(idCliente);
+    }
 
-        // elimina pagamenti legati agli abbonamenti del cliente
-        String sqlDeletePagamenti =
-                "DELETE FROM PAGAMENTO " +
-                "WHERE ID_ABBONAMENTO IN (" +
-                "   SELECT A.ID_ABBONAMENTO " +
-                "   FROM ABBONAMENTO A " +
-                "   JOIN CLIENTE C ON A.ID_CLIENTE = C.ID_CLIENTE " +
-                "   WHERE C.USERNAME = ?" +
-                ")";
+    private static Integer getIdClienteByUsername(String username) {
+        try (Connection conn = GestioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_SELECT_IDCLIENTE_BY_USERNAME)) {
 
-        // elimina abbonamenti del cliente
-        String sqlDeleteAbbonamenti =
-                "DELETE FROM ABBONAMENTO " +
-                "WHERE ID_CLIENTE IN (" +
-                "   SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?" +
-                ")";
+            ps.setString(1, username);
 
-        try (Connection conn = GestioneDB.getConnection()) {
-            conn.setAutoCommit(false);
-
-            try (PreparedStatement psCorsi = conn.prepareStatement(sqlDeleteIscrizioniCorsi);
-                 PreparedStatement psCons  = conn.prepareStatement(sqlDeleteConsulenze);
-                 PreparedStatement ps1     = conn.prepareStatement(sqlDeletePagamenti);
-                 PreparedStatement ps2     = conn.prepareStatement(sqlDeleteAbbonamenti)) {
-
-                // 1) iscrizioni corsi
-                psCorsi.setString(1, username);
-                psCorsi.executeUpdate();
-
-                // 2) consulenze
-                psCons.setString(1, username);
-                psCons.executeUpdate();
-
-                // 3) pagamenti
-                ps1.setString(1, username);
-                ps1.executeUpdate();
-
-                // 4) abbonamenti
-                ps2.setString(1, username);
-                ps2.executeUpdate();
-
-                conn.commit();
-                logger.info("Abbonamento (e pagamenti, corsi, consulenze) disdetti per username {}",
-                        username);
-
-            } catch (SQLException e) {
-                conn.rollback();
-                logger.error("Errore durante disdiciAbbonamentoPerUsername per {}", username, e);
-            } finally {
-                conn.setAutoCommit(true);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                return rs.getInt("ID_CLIENTE");
             }
 
         } catch (SQLException e) {
-            logger.error("Errore di connessione in disdiciAbbonamentoPerUsername", e);
+            logger.error("Errore nel recuperare ID_CLIENTE per username {}", username, e);
+            return null;
+        }
+    }
+
+    /**
+     * Esegue fisicamente le DELETE su tutte le tabelle collegate all'abbonamento.
+     * (iscrizioni corsi, consulenze, pagamenti, abbonamenti).
+     */
+    private static void eseguiDisdettaAbbonamento(Connection conn,
+                                                  int idCliente) throws SQLException {
+        deleteIscrizioniCorso(conn, idCliente);
+        deleteConsulenze(conn, idCliente);
+        deletePagamenti(conn, idCliente);
+        deleteAbbonamenti(conn, idCliente);
+    }
+
+    private static void deleteIscrizioniCorso(Connection conn,
+                                              int idCliente) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(SQL_DELETE_ISCRIZIONI_CORSO)) {
+            ps.setInt(1, idCliente);
+            ps.executeUpdate();
+        }
+    }
+
+    private static void deleteConsulenze(Connection conn,
+                                         int idCliente) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(SQL_DELETE_CONSULENZE)) {
+            ps.setInt(1, idCliente);
+            ps.executeUpdate();
+        }
+    }
+
+    private static void deletePagamenti(Connection conn,
+                                        int idCliente) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(SQL_DELETE_PAGAMENTI)) {
+            ps.setInt(1, idCliente);
+            ps.setInt(2, idCliente);
+            ps.executeUpdate();
+        }
+    }
+
+    private static void deleteAbbonamenti(Connection conn,
+                                          int idCliente) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(SQL_DELETE_ABBONAMENTI)) {
+            ps.setInt(1, idCliente);
+            ps.executeUpdate();
         }
     }
 }
