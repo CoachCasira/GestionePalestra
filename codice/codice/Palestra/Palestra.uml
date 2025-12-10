@@ -1142,7 +1142,7 @@
       <message xmi:type="uml:Message" xmi:id="_A3xeUMulEfCxB--iR9AuFg" name="3.2.1:selezionaConsulenza(&quot;Nutrizionista&quot;)" messageSort="asynchCall" receiveEvent="_A3yscculEfCxB--iR9AuFg" sendEvent="_A3yscMulEfCxB--iR9AuFg"/>
       <message xmi:type="uml:Message" xmi:id="_JTPOwMulEfCxB--iR9AuFg" name="3.2.2.1.1: &lt;&lt;create>>consulenzaNutrizionista(Data,cliente,idNutrizionista)" messageSort="asynchCall" receiveEvent="_JTP10culEfCxB--iR9AuFg" sendEvent="_JTP10MulEfCxB--iR9AuFg"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Activity" xmi:id="_K4a6ENEaEfCDMMw9uZosLQ" name="ccccccccccccc" node="_fyhDgNEcEfCDMMw9uZosLQ _TjPDMNEcEfCDMMw9uZosLQ _FT0XINEcEfCDMMw9uZosLQ _EDySoNEcEfCDMMw9uZosLQ _CRTBUNEcEfCDMMw9uZosLQ _1-i2QNEbEfCDMMw9uZosLQ _l3MYMNEbEfCDMMw9uZosLQ _hHmckNEbEfCDMMw9uZosLQ _Usj4MNEbEfCDMMw9uZosLQ _8-MlcNEaEfCDMMw9uZosLQ _xagf0NEaEfCDMMw9uZosLQ _rniJsNEcEfCDMMw9uZosLQ _NnfBANEdEfCDMMw9uZosLQ _XzT70NEdEfCDMMw9uZosLQ __w3kkNEeEfCDMMw9uZosLQ _QHqM0NEfEfCDMMw9uZosLQ _RxreoNEfEfCDMMw9uZosLQ _UfnrkNEfEfCDMMw9uZosLQ _d-Xd8NEfEfCDMMw9uZosLQ _rMqrQNEfEfCDMMw9uZosLQ _FHHbENEgEfCDMMw9uZosLQ _4u3PgNEgEfCDMMw9uZosLQ _pXfncNEhEfCDMMw9uZosLQ">
+    <packagedElement xmi:type="uml:Activity" xmi:id="_K4a6ENEaEfCDMMw9uZosLQ" name="Palestra" node="_fyhDgNEcEfCDMMw9uZosLQ _TjPDMNEcEfCDMMw9uZosLQ _FT0XINEcEfCDMMw9uZosLQ _EDySoNEcEfCDMMw9uZosLQ _CRTBUNEcEfCDMMw9uZosLQ _1-i2QNEbEfCDMMw9uZosLQ _l3MYMNEbEfCDMMw9uZosLQ _hHmckNEbEfCDMMw9uZosLQ _Usj4MNEbEfCDMMw9uZosLQ _8-MlcNEaEfCDMMw9uZosLQ _xagf0NEaEfCDMMw9uZosLQ _rniJsNEcEfCDMMw9uZosLQ _NnfBANEdEfCDMMw9uZosLQ _XzT70NEdEfCDMMw9uZosLQ __w3kkNEeEfCDMMw9uZosLQ _QHqM0NEfEfCDMMw9uZosLQ _RxreoNEfEfCDMMw9uZosLQ _UfnrkNEfEfCDMMw9uZosLQ _d-Xd8NEfEfCDMMw9uZosLQ _rMqrQNEfEfCDMMw9uZosLQ _FHHbENEgEfCDMMw9uZosLQ _4u3PgNEgEfCDMMw9uZosLQ _pXfncNEhEfCDMMw9uZosLQ">
       <ownedBehavior xmi:type="uml:Activity" xmi:id="_tFBCENEhEfCDMMw9uZosLQ" name="Eccezione"/>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_RpyjYNEeEfCDMMw9uZosLQ" name="Operation1" method="_L1PK0NEeEfCDMMw9uZosLQ" bodyCondition="_VGFrINEeEfCDMMw9uZosLQ">
         <ownedRule xmi:type="uml:Constraint" xmi:id="_VGFrINEeEfCDMMw9uZosLQ" name="Constraint1">
@@ -1160,10 +1160,10 @@
           </specification>
         </ownedRule>
       </ownedOperation>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_jL858NEbEfCDMMw9uZosLQ" target="_hHmckNEbEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_jL858NEbEfCDMMw9uZosLQ" name="[logout]" target="_hHmckNEbEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_yR17ANEbEfCDMMw9uZosLQ" target="_Usj4MNEbEfCDMMw9uZosLQ" source="_l3MYMNEbEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_HHhwcNEcEfCDMMw9uZosLQ" target="_CRTBUNEcEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_YXWScNEcEfCDMMw9uZosLQ" target="_TjPDMNEcEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_HHhwcNEcEfCDMMw9uZosLQ" name="[gestioneArmadietto]" target="_CRTBUNEcEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_YXWScNEcEfCDMMw9uZosLQ" name="[prenotazione]" target="_TjPDMNEcEfCDMMw9uZosLQ" source="_Usj4MNEbEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_bVRcINEcEfCDMMw9uZosLQ" target="_8-MlcNEaEfCDMMw9uZosLQ" source="_xagf0NEaEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_kTc4ENEcEfCDMMw9uZosLQ" target="_fyhDgNEcEfCDMMw9uZosLQ" source="_hHmckNEbEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_l49dUNEcEfCDMMw9uZosLQ" target="_1-i2QNEbEfCDMMw9uZosLQ" source="_fyhDgNEcEfCDMMw9uZosLQ"/>
@@ -1173,13 +1173,13 @@
       <edge xmi:type="uml:ControlFlow" xmi:id="_5NRmoNEcEfCDMMw9uZosLQ" target="_EDySoNEcEfCDMMw9uZosLQ" source="_TjPDMNEcEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_7VP_wNEcEfCDMMw9uZosLQ" target="_FT0XINEcEfCDMMw9uZosLQ" source="_TjPDMNEcEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_Z3NtQNEdEfCDMMw9uZosLQ" target="_XzT70NEdEfCDMMw9uZosLQ" source="_CRTBUNEcEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_dJDRcNEdEfCDMMw9uZosLQ" target="_NnfBANEdEfCDMMw9uZosLQ" source="_XzT70NEdEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_dJDRcNEdEfCDMMw9uZosLQ" name="[disponibili]" target="_NnfBANEdEfCDMMw9uZosLQ" source="_XzT70NEdEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_naz1INEdEfCDMMw9uZosLQ" target="_Usj4MNEbEfCDMMw9uZosLQ" source="_XzT70NEdEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_KDIekNEfEfCDMMw9uZosLQ" target="__w3kkNEeEfCDMMw9uZosLQ" source="_EDySoNEcEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_lrycoNEfEfCDMMw9uZosLQ" target="_d-Xd8NEfEfCDMMw9uZosLQ" source="_FT0XINEcEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_nTI08NEfEfCDMMw9uZosLQ" target="_RxreoNEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_owyesNEfEfCDMMw9uZosLQ" target="_QHqM0NEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="_qJ8C8NEfEfCDMMw9uZosLQ" target="_UfnrkNEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_nTI08NEfEfCDMMw9uZosLQ" name="[tipo== PT]" target="_RxreoNEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_owyesNEfEfCDMMw9uZosLQ" name="[tipo== nutrizionista]" target="_QHqM0NEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_qJ8C8NEfEfCDMMw9uZosLQ" name="[tipo== istruttore corso]" target="_UfnrkNEfEfCDMMw9uZosLQ" source="__w3kkNEeEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_2w0D4NEfEfCDMMw9uZosLQ" target="_rMqrQNEfEfCDMMw9uZosLQ" source="_UfnrkNEfEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_4efGoNEfEfCDMMw9uZosLQ" target="_rMqrQNEfEfCDMMw9uZosLQ" source="_RxreoNEfEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_9Cv8ANEfEfCDMMw9uZosLQ" target="_rMqrQNEfEfCDMMw9uZosLQ" source="_QHqM0NEfEfCDMMw9uZosLQ"/>
@@ -1188,14 +1188,15 @@
       <edge xmi:type="uml:ControlFlow" xmi:id="_R4O9INEgEfCDMMw9uZosLQ" target="_Usj4MNEbEfCDMMw9uZosLQ" source="_FHHbENEgEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_HKt1ENEhEfCDMMw9uZosLQ" target="_FHHbENEgEfCDMMw9uZosLQ" source="_4u654NEgEfCDMMw9uZosLQ"/>
       <edge xmi:type="uml:ControlFlow" xmi:id="_QhG8sNEhEfCDMMw9uZosLQ" target="_4u3PgNEgEfCDMMw9uZosLQ" source="_d-Xd8NEfEfCDMMw9uZosLQ"/>
-      <edge xmi:type="uml:ControlFlow" xmi:id="__sLKcNEhEfCDMMw9uZosLQ" target="_Usj4MNEbEfCDMMw9uZosLQ" source="_pXfncNEhEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_6ZQSkNXzEfC8CqVAUaq5Tg" name="[pieni]" target="_pXfncNEhEfCDMMw9uZosLQ" source="_XzT70NEdEfCDMMw9uZosLQ"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_YThG4NX0EfC8CqVAUaq5Tg" target="_Usj4MNEbEfCDMMw9uZosLQ" source="_pXfncNEhEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:InitialNode" xmi:id="_xagf0NEaEfCDMMw9uZosLQ" name="         Inizio " outgoing="_bVRcINEcEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:AcceptEventAction" xmi:id="_8-MlcNEaEfCDMMw9uZosLQ" name="Installa applicazione" incoming="_bVRcINEcEfCDMMw9uZosLQ" outgoing="_1RtwANEcEfCDMMw9uZosLQ">
         <handler xmi:type="uml:ExceptionHandler" xmi:id="_ElZnYNEbEfCDMMw9uZosLQ"/>
         <handler xmi:type="uml:ExceptionHandler" xmi:id="_FU9cENEbEfCDMMw9uZosLQ"/>
         <handler xmi:type="uml:ExceptionHandler" xmi:id="_a170wNEcEfCDMMw9uZosLQ"/>
       </node>
-      <node xmi:type="uml:DecisionNode" xmi:id="_Usj4MNEbEfCDMMw9uZosLQ" name="GesticiApp" incoming="_yR17ANEbEfCDMMw9uZosLQ _naz1INEdEfCDMMw9uZosLQ _R4O9INEgEfCDMMw9uZosLQ __sLKcNEhEfCDMMw9uZosLQ" outgoing="_jL858NEbEfCDMMw9uZosLQ _HHhwcNEcEfCDMMw9uZosLQ _YXWScNEcEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:DecisionNode" xmi:id="_Usj4MNEbEfCDMMw9uZosLQ" name="GesticiApp" incoming="_yR17ANEbEfCDMMw9uZosLQ _naz1INEdEfCDMMw9uZosLQ _R4O9INEgEfCDMMw9uZosLQ _YThG4NX0EfC8CqVAUaq5Tg" outgoing="_jL858NEbEfCDMMw9uZosLQ _HHhwcNEcEfCDMMw9uZosLQ _YXWScNEcEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:OpaqueAction" xmi:id="_hHmckNEbEfCDMMw9uZosLQ" name="Esce applicazione" incoming="_jL858NEbEfCDMMw9uZosLQ" outgoing="_kTc4ENEcEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:OpaqueAction" xmi:id="_l3MYMNEbEfCDMMw9uZosLQ" name="Entra nell'App" incoming="_2w8HENEcEfCDMMw9uZosLQ" outgoing="_yR17ANEbEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:ActivityFinalNode" xmi:id="_1-i2QNEbEfCDMMw9uZosLQ" name="Fine" incoming="_l49dUNEcEfCDMMw9uZosLQ _Nm3OkNEgEfCDMMw9uZosLQ"/>
@@ -1209,11 +1210,11 @@
       <node xmi:type="uml:DecisionNode" xmi:id="_fyhDgNEcEfCDMMw9uZosLQ" name="" incoming="_kTc4ENEcEfCDMMw9uZosLQ" outgoing="_l49dUNEcEfCDMMw9uZosLQ _0Qu0INEcEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:DecisionNode" xmi:id="_rniJsNEcEfCDMMw9uZosLQ" name="" incoming="_0Qu0INEcEfCDMMw9uZosLQ _1RtwANEcEfCDMMw9uZosLQ" outgoing="_2w8HENEcEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:OpaqueAction" xmi:id="_NnfBANEdEfCDMMw9uZosLQ" name="Riserva amadietto" incoming="_dJDRcNEdEfCDMMw9uZosLQ"/>
-      <node xmi:type="uml:DecisionNode" xmi:id="_XzT70NEdEfCDMMw9uZosLQ" name="" incoming="_Z3NtQNEdEfCDMMw9uZosLQ" outgoing="_dJDRcNEdEfCDMMw9uZosLQ _naz1INEdEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:DecisionNode" xmi:id="_XzT70NEdEfCDMMw9uZosLQ" name="" incoming="_Z3NtQNEdEfCDMMw9uZosLQ" outgoing="_dJDRcNEdEfCDMMw9uZosLQ _naz1INEdEfCDMMw9uZosLQ _6ZQSkNXzEfC8CqVAUaq5Tg"/>
       <node xmi:type="uml:DecisionNode" xmi:id="__w3kkNEeEfCDMMw9uZosLQ" name="" incoming="_KDIekNEfEfCDMMw9uZosLQ" outgoing="_nTI08NEfEfCDMMw9uZosLQ _owyesNEfEfCDMMw9uZosLQ _qJ8C8NEfEfCDMMw9uZosLQ"/>
-      <node xmi:type="uml:OpaqueAction" xmi:id="_QHqM0NEfEfCDMMw9uZosLQ" name="Nutrizionista" incoming="_owyesNEfEfCDMMw9uZosLQ" outgoing="_9Cv8ANEfEfCDMMw9uZosLQ"/>
-      <node xmi:type="uml:OpaqueAction" xmi:id="_RxreoNEfEfCDMMw9uZosLQ" name="Personaltrainer" incoming="_nTI08NEfEfCDMMw9uZosLQ" outgoing="_4efGoNEfEfCDMMw9uZosLQ"/>
-      <node xmi:type="uml:OpaqueAction" xmi:id="_UfnrkNEfEfCDMMw9uZosLQ" name="Istruttore corso" incoming="_qJ8C8NEfEfCDMMw9uZosLQ" outgoing="_2w0D4NEfEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:OpaqueAction" xmi:id="_QHqM0NEfEfCDMMw9uZosLQ" name="selezionaNutrizionista" incoming="_owyesNEfEfCDMMw9uZosLQ" outgoing="_9Cv8ANEfEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:OpaqueAction" xmi:id="_RxreoNEfEfCDMMw9uZosLQ" name="selezionaPersonaltrainer" incoming="_nTI08NEfEfCDMMw9uZosLQ" outgoing="_4efGoNEfEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:OpaqueAction" xmi:id="_UfnrkNEfEfCDMMw9uZosLQ" name="selezionaIstruttore corso" incoming="_qJ8C8NEfEfCDMMw9uZosLQ" outgoing="_2w0D4NEfEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:JoinNode" xmi:id="_d-Xd8NEfEfCDMMw9uZosLQ" name="" incoming="_lrycoNEfEfCDMMw9uZosLQ __m4FoNEfEfCDMMw9uZosLQ" outgoing="_QhG8sNEhEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:DecisionNode" xmi:id="_rMqrQNEfEfCDMMw9uZosLQ" incoming="_2w0D4NEfEfCDMMw9uZosLQ _4efGoNEfEfCDMMw9uZosLQ _9Cv8ANEfEfCDMMw9uZosLQ" outgoing="__m4FoNEfEfCDMMw9uZosLQ">
         <name xsi:nil="true"/>
@@ -1225,7 +1226,7 @@
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_4u654tEgEfCDMMw9uZosLQ" value="1"/>
         </result>
       </node>
-      <node xmi:type="uml:CallBehaviorAction" xmi:id="_pXfncNEhEfCDMMw9uZosLQ" name="Armadietti pieni" outgoing="__sLKcNEhEfCDMMw9uZosLQ" behavior="_tFBCENEhEfCDMMw9uZosLQ"/>
+      <node xmi:type="uml:CallBehaviorAction" xmi:id="_pXfncNEhEfCDMMw9uZosLQ" name="notificaArmadietti pieni" incoming="_6ZQSkNXzEfC8CqVAUaq5Tg" outgoing="_YThG4NX0EfC8CqVAUaq5Tg" behavior="_tFBCENEhEfCDMMw9uZosLQ"/>
     </packagedElement>
     <packagedElement xmi:type="uml:ExecutionEnvironment" xmi:id="_uwQ_wNEdEfCDMMw9uZosLQ" name="ExecutionEnvironment1"/>
     <packagedElement xmi:type="uml:Activity" xmi:id="_L1PK0NEeEfCDMMw9uZosLQ" name="Activity71" specification="_RpyjYNEeEfCDMMw9uZosLQ"/>
