@@ -7,249 +7,262 @@ import java.sql.ResultSet;
 
 public class InizializzazioneDB {
 
-    public static void init() {
+	public static void init() {
+	    try (Connection conn = GestioneDB.getConnection();
+	         Statement stmt = conn.createStatement()) {
 
-        // 1 - SPOGLIATOIO
-        String sqlSpogliatoio = "CREATE TABLE IF NOT EXISTS SPOGLIATOIO (" +
-                "ID_SPOGLIATOIO INT AUTO_INCREMENT PRIMARY KEY, " +
-                "NUM_ARMADIETTI INT NOT NULL, " +
-                "NUM_DOCCE INT NOT NULL, " +
-                "NUM_ARMADIETTI_LIBERI INT NOT NULL" +
-                ");";
+	        // 1) CREAZIONE TABELLE (spezzata in blocchi logici)
+	        creaTabelleStruttureFisiche(stmt);
+	        creaTabelleClientiAbbonamenti(stmt);
+	        creaTabelleDipendentiECorsi(stmt);
+	        creaTabelleConsulenzeEMacchinari(stmt);
 
-        // 2 - SALA (padre)
-        String sqlSala = "CREATE TABLE IF NOT EXISTS SALA (" +
-                "ID_SALA INT AUTO_INCREMENT PRIMARY KEY, " +
-                "ORARI_APERTURA VARCHAR(100) NOT NULL, " +
-                "CAPIENZA INT NOT NULL, " +
-                "DISPONIBILITA BOOLEAN NOT NULL" +
-                ");";
+	        // 2) POPOLAMENTO DATI DI BASE (come prima)
+	        popolaDipendenti(conn);
+	        popolaSaleESpa(conn);
+	        popolaSpogliatoi(conn);
+	        popolaMacchinari(conn);
+	        popolaCorsiELezioni(conn);
 
-        // 3 - SALA_PESI (figlia)
-        String sqlSalaPesi = "CREATE TABLE IF NOT EXISTS SALA_PESI (" +
-                "ID_SALA INT PRIMARY KEY, " +
-                "METRATURA INT NOT NULL, " +
-                "NUM_MACCHINARI INT NOT NULL, " +
-                "NUM_PANCHE INT NOT NULL, " +
-                "NUM_PESI_LIBERI INT NOT NULL, " +
-                "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
-                ");";
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	private static void creaTabelleStruttureFisiche(Statement stmt) throws SQLException {
 
-        // 4 - SALA_CORSI (figlia)
-        String sqlSalaCorsi = "CREATE TABLE IF NOT EXISTS SALA_CORSI (" +
-                "ID_SALA INT PRIMARY KEY, " +
-                "ORARIO_CORSO VARCHAR(100) NOT NULL, " +
-                "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
-                ");";
+	    // SPOGLIATOIO
+	    String sqlSpogliatoio = "CREATE TABLE IF NOT EXISTS SPOGLIATOIO (" +
+	            "ID_SPOGLIATOIO INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "NUM_ARMADIETTI INT NOT NULL, " +
+	            "NUM_DOCCE INT NOT NULL, " +
+	            "NUM_ARMADIETTI_LIBERI INT NOT NULL" +
+	            ");";
 
-        // 5 - SPA (figlia di Sala)
-        String sqlSpa = "CREATE TABLE IF NOT EXISTS SPA (" +
-                "ID_SALA INT PRIMARY KEY, " +
-                "NUM_SAUNE INT NOT NULL, " +
-                "NUM_PISCINE INT NOT NULL, " +
-                "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
-                ");";
+	    // SALA (padre)
+	    String sqlSala = "CREATE TABLE IF NOT EXISTS SALA (" +
+	            "ID_SALA INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "ORARI_APERTURA VARCHAR(100) NOT NULL, " +
+	            "CAPIENZA INT NOT NULL, " +
+	            "DISPONIBILITA BOOLEAN NOT NULL" +
+	            ");";
 
-        // 6 - CLIENTE (con EMAIL)
-        String sqlCliente = "CREATE TABLE IF NOT EXISTS CLIENTE (" +
-                "ID_CLIENTE INT AUTO_INCREMENT PRIMARY KEY, " +
-                "USERNAME VARCHAR(50) NOT NULL UNIQUE, " +
-                "EMAIL VARCHAR(100) NOT NULL UNIQUE, " +
-                "NOME VARCHAR(100) NOT NULL, " +
-                "COGNOME VARCHAR(100) NOT NULL, " +
-                "CF VARCHAR(16) NOT NULL UNIQUE, " +
-                "LUOGO_NASCITA VARCHAR(100) NOT NULL, " +
-                "DATA_NASCITA DATE NOT NULL, " +
-                "IBAN VARCHAR(34), " +
-                "PASSWORD VARCHAR(100) NOT NULL" +
-                ");";
+	    // SALA_PESI (figlia)
+	    String sqlSalaPesi = "CREATE TABLE IF NOT EXISTS SALA_PESI (" +
+	            "ID_SALA INT PRIMARY KEY, " +
+	            "METRATURA INT NOT NULL, " +
+	            "NUM_MACCHINARI INT NOT NULL, " +
+	            "NUM_PANCHE INT NOT NULL, " +
+	            "NUM_PESI_LIBERI INT NOT NULL, " +
+	            "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
+	            ");";
 
-        // 6bis - PASSWORD_RESET_TOKEN
-        String sqlPasswordReset = "CREATE TABLE IF NOT EXISTS PASSWORD_RESET_TOKEN (" +
-                "ID_TOKEN INT AUTO_INCREMENT PRIMARY KEY, " +
-                "ID_CLIENTE INT NOT NULL, " +
-                "TOKEN VARCHAR(20) NOT NULL, " +
-                "SCADENZA TIMESTAMP NOT NULL, " +
-                "UTILIZZATO BOOLEAN NOT NULL DEFAULT FALSE, " +
-                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE)" +
-                ");";
+	    // SALA_CORSI (figlia)
+	    String sqlSalaCorsi = "CREATE TABLE IF NOT EXISTS SALA_CORSI (" +
+	            "ID_SALA INT PRIMARY KEY, " +
+	            "ORARIO_CORSO VARCHAR(100) NOT NULL, " +
+	            "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
+	            ");";
 
-        // 7 - ABBONAMENTO (padre)
-        String sqlAbbonamento = "CREATE TABLE IF NOT EXISTS ABBONAMENTO (" +
-                "ID_ABBONAMENTO INT AUTO_INCREMENT PRIMARY KEY, " +
-                "TIPO VARCHAR(20) NOT NULL, " +
-                "SCADENZA DATE, " +
-                "ID_SPOGLIATOIO INT, " +
-                "ID_CLIENTE INT NOT NULL, " +
-                "FASCIA_ORARIA_CONSENTITA VARCHAR(100), " +
-                "PREZZO INT NOT NULL, " +
-                "ATTIVO BOOLEAN DEFAULT TRUE, " +
-                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
-                "FOREIGN KEY (ID_SPOGLIATOIO) REFERENCES SPOGLIATOIO(ID_SPOGLIATOIO)" +
-                ");";
+	    // SPA
+	    String sqlSpa = "CREATE TABLE IF NOT EXISTS SPA (" +
+	            "ID_SALA INT PRIMARY KEY, " +
+	            "NUM_SAUNE INT NOT NULL, " +
+	            "NUM_PISCINE INT NOT NULL, " +
+	            "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
+	            ");";
 
-        // 8 - SOTTOCLASSI ABBONAMENTO
-        String sqlAbbonamentoBasico = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_BASICO (" +
-                "ID_ABBONAMENTO INT PRIMARY KEY, " +
-                "ID_SALA_PESI INT NOT NULL, " +
-                "LIMITE_INGRESSI_MENSILI INT NOT NULL, " +
-                "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
-                "FOREIGN KEY (ID_SALA_PESI) REFERENCES SALA_PESI(ID_SALA)" +
-                ");";
+	    stmt.execute(sqlSpogliatoio);
+	    stmt.execute(sqlSala);
+	    stmt.execute(sqlSalaPesi);
+	    stmt.execute(sqlSalaCorsi);
+	    stmt.execute(sqlSpa);
+	}
+	private static void creaTabelleClientiAbbonamenti(Statement stmt) throws SQLException {
 
-        String sqlAbbonamentoCompleto = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_COMPLETO (" +
-                "ID_ABBONAMENTO INT PRIMARY KEY, " +
-                "ID_SALA INT NOT NULL, " +
-                "SOGLIA_SCONTO INT NOT NULL, " +
-                "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
-                "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
-                ");";
+	    // CLIENTE
+	    String sqlCliente = "CREATE TABLE IF NOT EXISTS CLIENTE (" +
+	            "ID_CLIENTE INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "USERNAME VARCHAR(50) NOT NULL UNIQUE, " +
+	            "EMAIL VARCHAR(100) NOT NULL UNIQUE, " +
+	            "NOME VARCHAR(100) NOT NULL, " +
+	            "COGNOME VARCHAR(100) NOT NULL, " +
+	            "CF VARCHAR(16) NOT NULL UNIQUE, " +
+	            "LUOGO_NASCITA VARCHAR(100) NOT NULL, " +
+	            "DATA_NASCITA DATE NOT NULL, " +
+	            "IBAN VARCHAR(34), " +
+	            "PASSWORD VARCHAR(100) NOT NULL" +
+	            ");";
 
-        String sqlAbbonamentoCorsi = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_CORSI (" +
-                "ID_ABBONAMENTO INT PRIMARY KEY, " +
-                "ID_SALA_CORSI INT NOT NULL, " +
-                "NUM_CORSI_INCLUSI INT NOT NULL, " +
-                "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
-                "FOREIGN KEY (ID_SALA_CORSI) REFERENCES SALA_CORSI(ID_SALA)" +
-                ");";
+	    // PASSWORD_RESET_TOKEN
+	    String sqlPasswordReset = "CREATE TABLE IF NOT EXISTS PASSWORD_RESET_TOKEN (" +
+	            "ID_TOKEN INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "ID_CLIENTE INT NOT NULL, " +
+	            "TOKEN VARCHAR(20) NOT NULL, " +
+	            "SCADENZA TIMESTAMP NOT NULL, " +
+	            "UTILIZZATO BOOLEAN NOT NULL DEFAULT FALSE, " +
+	            "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE)" +
+	            ");";
 
-        // 9 - PAGAMENTO
-        String sqlPagamento = "CREATE TABLE IF NOT EXISTS PAGAMENTO (" +
-                "ID_PAGAMENTO INT AUTO_INCREMENT PRIMARY KEY, " +
-                "METODO VARCHAR(50) NOT NULL, " +
-                "IMPORTO INT NOT NULL, " +
-                "DATA_PAGAMENTO DATE NOT NULL, " +
-                "ID_CLIENTE INT NOT NULL, " +
-                "ID_ABBONAMENTO INT NOT NULL, " +
-                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
-                "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO)" +
-                ");";
+	    // ABBONAMENTO
+	    String sqlAbbonamento = "CREATE TABLE IF NOT EXISTS ABBONAMENTO (" +
+	            "ID_ABBONAMENTO INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "TIPO VARCHAR(20) NOT NULL, " +
+	            "SCADENZA DATE, " +
+	            "ID_SPOGLIATOIO INT, " +
+	            "ID_CLIENTE INT NOT NULL, " +
+	            "FASCIA_ORARIA_CONSENTITA VARCHAR(100), " +
+	            "PREZZO INT NOT NULL, " +
+	            "ATTIVO BOOLEAN DEFAULT TRUE, " +
+	            "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
+	            "FOREIGN KEY (ID_SPOGLIATOIO) REFERENCES SPOGLIATOIO(ID_SPOGLIATOIO)" +
+	            ");";
 
-        // 10 - DIPENDENTE (padre)
-        String sqlDipendente = "CREATE TABLE IF NOT EXISTS DIPENDENTE (" +
-                "ID_DIPENDENTE INT AUTO_INCREMENT PRIMARY KEY, " +
-                "NOME VARCHAR(100) NOT NULL, " +
-                "COGNOME VARCHAR(100) NOT NULL, " +
-                "RUOLO VARCHAR(30) NOT NULL, " +
-                "ORARIO_DISP VARCHAR(100)" +
-                ");";
+	    // SOTTOCLASSI ABBONAMENTO
+	    String sqlAbbonamentoBasico = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_BASICO (" +
+	            "ID_ABBONAMENTO INT PRIMARY KEY, " +
+	            "ID_SALA_PESI INT NOT NULL, " +
+	            "LIMITE_INGRESSI_MENSILI INT NOT NULL, " +
+	            "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
+	            "FOREIGN KEY (ID_SALA_PESI) REFERENCES SALA_PESI(ID_SALA)" +
+	            ");";
 
-        // 11 - CORSO
-        String sqlCorso = "CREATE TABLE IF NOT EXISTS CORSO (" +
-                "ID_CORSO INT AUTO_INCREMENT PRIMARY KEY, " +
-                "NOME VARCHAR(100) NOT NULL, " +
-                "DESCRIZIONE VARCHAR(500) NOT NULL, " +
-                "DURATA_MINUTI INT NOT NULL" +
-                ");";
+	    String sqlAbbonamentoCompleto = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_COMPLETO (" +
+	            "ID_ABBONAMENTO INT PRIMARY KEY, " +
+	            "ID_SALA INT NOT NULL, " +
+	            "SOGLIA_SCONTO INT NOT NULL, " +
+	            "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
+	            "FOREIGN KEY (ID_SALA) REFERENCES SALA(ID_SALA)" +
+	            ");";
 
-        // 12 - LEZIONE_CORSO
-        String sqlLezioneCorso = "CREATE TABLE IF NOT EXISTS LEZIONE_CORSO (" +
-                "ID_LEZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
-                "ID_CORSO INT NOT NULL, " +
-                "DATA_LEZIONE DATE NOT NULL, " +
-                "ORA_LEZIONE TIME NOT NULL, " +
-                "POSTI_TOTALI INT NOT NULL, " +
-                "POSTI_PRENOTATI INT NOT NULL DEFAULT 0, " +
-                "ID_ISTRUTTORE INT NOT NULL, " +
-                "FOREIGN KEY (ID_CORSO) REFERENCES CORSO(ID_CORSO), " +
-                "FOREIGN KEY (ID_ISTRUTTORE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
-                ");";
+	    String sqlAbbonamentoCorsi = "CREATE TABLE IF NOT EXISTS ABBONAMENTO_CORSI (" +
+	            "ID_ABBONAMENTO INT PRIMARY KEY, " +
+	            "ID_SALA_CORSI INT NOT NULL, " +
+	            "NUM_CORSI_INCLUSI INT NOT NULL, " +
+	            "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO), " +
+	            "FOREIGN KEY (ID_SALA_CORSI) REFERENCES SALA_CORSI(ID_SALA)" +
+	            ");";
 
-        // 13 - ISCRIZIONE_CORSO
-        String sqlIscrizioneCorso = "CREATE TABLE IF NOT EXISTS ISCRIZIONE_CORSO (" +
-                "ID_ISCRIZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
-                "ID_CLIENTE INT NOT NULL, " +
-                "ID_LEZIONE INT NOT NULL, " +
-                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
-                "FOREIGN KEY (ID_LEZIONE) REFERENCES LEZIONE_CORSO(ID_LEZIONE)" +
-                ");";
+	    // PAGAMENTO
+	    String sqlPagamento = "CREATE TABLE IF NOT EXISTS PAGAMENTO (" +
+	            "ID_PAGAMENTO INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "METODO VARCHAR(50) NOT NULL, " +
+	            "IMPORTO INT NOT NULL, " +
+	            "DATA_PAGAMENTO DATE NOT NULL, " +
+	            "ID_CLIENTE INT NOT NULL, " +
+	            "ID_ABBONAMENTO INT NOT NULL, " +
+	            "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
+	            "FOREIGN KEY (ID_ABBONAMENTO) REFERENCES ABBONAMENTO(ID_ABBONAMENTO)" +
+	            ");";
 
-        // 14 - CONSULENZA
-        String sqlConsulenza = "CREATE TABLE IF NOT EXISTS CONSULENZA (" +
-                "ID_CONSULENZA INT AUTO_INCREMENT PRIMARY KEY, " +
-                "ID_CLIENTE INT NOT NULL, " +
-                "ID_DIPENDENTE INT NOT NULL, " +
-                "TIPO VARCHAR(30) NOT NULL, " +
-                "DATA_CONSULENZA DATE NOT NULL, " +
-                "ORA_CONSULENZA TIME NOT NULL, " +
-                "NOTE VARCHAR(255), " +
-                "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
-                "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
-                ");";
+	    stmt.execute(sqlCliente);
+	    stmt.execute(sqlPasswordReset);
+	    stmt.execute(sqlAbbonamento);
+	    stmt.execute(sqlAbbonamentoBasico);
+	    stmt.execute(sqlAbbonamentoCompleto);
+	    stmt.execute(sqlAbbonamentoCorsi);
+	    stmt.execute(sqlPagamento);
+	}
+	private static void creaTabelleDipendentiECorsi(Statement stmt) throws SQLException {
 
-        // 15 - PERSONAL_TRAINER
-        String sqlPersonalTrainer = "CREATE TABLE IF NOT EXISTS PERSONAL_TRAINER (" +
-                "ID_DIPENDENTE INT PRIMARY KEY, " +
-                "PARTITA_IVA VARCHAR(20), " +
-                "ANNI_ESPERIENZA INT, " +
-                "CERTIFICATI VARCHAR(255), " +
-                "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
-                ");";
+	    // DIPENDENTE
+	    String sqlDipendente = "CREATE TABLE IF NOT EXISTS DIPENDENTE (" +
+	            "ID_DIPENDENTE INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "NOME VARCHAR(100) NOT NULL, " +
+	            "COGNOME VARCHAR(100) NOT NULL, " +
+	            "RUOLO VARCHAR(30) NOT NULL, " +
+	            "ORARIO_DISP VARCHAR(100)" +
+	            ");";
 
-        // 16 - ISTRUTTORE_CORSO
-        String sqlIstruttoreCorso = "CREATE TABLE IF NOT EXISTS ISTRUTTORE_CORSO (" +
-                "ID_DIPENDENTE INT PRIMARY KEY, " +
-                "TIPO_CORSO_INSEGNATO VARCHAR(100) NOT NULL, " +
-                "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
-                ");";
+	    // CORSO
+	    String sqlCorso = "CREATE TABLE IF NOT EXISTS CORSO (" +
+	            "ID_CORSO INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "NOME VARCHAR(100) NOT NULL, " +
+	            "DESCRIZIONE VARCHAR(500) NOT NULL, " +
+	            "DURATA_MINUTI INT NOT NULL" +
+	            ");";
 
-        // 17 - NUTRIZIONISTA
-        String sqlNutrizionista = "CREATE TABLE IF NOT EXISTS NUTRIZIONISTA (" +
-                "ID_DIPENDENTE INT PRIMARY KEY, " +
-                "PARCELLA VARCHAR(50), " +
-                "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
-                ");";
+	    // LEZIONE_CORSO
+	    String sqlLezioneCorso = "CREATE TABLE IF NOT EXISTS LEZIONE_CORSO (" +
+	            "ID_LEZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "ID_CORSO INT NOT NULL, " +
+	            "DATA_LEZIONE DATE NOT NULL, " +
+	            "ORA_LEZIONE TIME NOT NULL, " +
+	            "POSTI_TOTALI INT NOT NULL, " +
+	            "POSTI_PRENOTATI INT NOT NULL DEFAULT 0, " +
+	            "ID_ISTRUTTORE INT NOT NULL, " +
+	            "FOREIGN KEY (ID_CORSO) REFERENCES CORSO(ID_CORSO), " +
+	            "FOREIGN KEY (ID_ISTRUTTORE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+	            ");";
 
-        // 18 - MACCHINARIO
-        String sqlMacchinario = "CREATE TABLE IF NOT EXISTS MACCHINARIO (" +
-                "ID_MACCHINARIO INT AUTO_INCREMENT PRIMARY KEY, " +
-                "NOME VARCHAR(100) NOT NULL, " +
-                "MARCA VARCHAR(100), " +
-                "CAPACITA_CARICO INT, " +
-                "OCCUPATO BOOLEAN NOT NULL, " +
-                "ID_SALA_PESI INT, " +
-                "FOREIGN KEY (ID_SALA_PESI) REFERENCES SALA_PESI(ID_SALA)" +
-                ");";
+	    // ISCRIZIONE_CORSO
+	    String sqlIscrizioneCorso = "CREATE TABLE IF NOT EXISTS ISCRIZIONE_CORSO (" +
+	            "ID_ISCRIZIONE INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "ID_CLIENTE INT NOT NULL, " +
+	            "ID_LEZIONE INT NOT NULL, " +
+	            "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
+	            "FOREIGN KEY (ID_LEZIONE) REFERENCES LEZIONE_CORSO(ID_LEZIONE)" +
+	            ");";
 
-        try (Connection conn = GestioneDB.getConnection();
-             Statement stmt = conn.createStatement()) {
+	    stmt.execute(sqlDipendente);
+	    stmt.execute(sqlCorso);
+	    stmt.execute(sqlLezioneCorso);
+	    stmt.execute(sqlIscrizioneCorso);
+	}
+	private static void creaTabelleConsulenzeEMacchinari(Statement stmt) throws SQLException {
 
-            // CREAZIONE TABELLE
-            stmt.execute(sqlSpogliatoio);
-            stmt.execute(sqlSala);
-            stmt.execute(sqlSalaPesi);
-            stmt.execute(sqlSalaCorsi);
-            stmt.execute(sqlSpa);
-            stmt.execute(sqlCliente);
-            stmt.execute(sqlPasswordReset);
-            stmt.execute(sqlAbbonamento);
-            stmt.execute(sqlAbbonamentoBasico);
-            stmt.execute(sqlAbbonamentoCompleto);
-            stmt.execute(sqlAbbonamentoCorsi);
-            stmt.execute(sqlPagamento);
+	    // CONSULENZA
+	    String sqlConsulenza = "CREATE TABLE IF NOT EXISTS CONSULENZA (" +
+	            "ID_CONSULENZA INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "ID_CLIENTE INT NOT NULL, " +
+	            "ID_DIPENDENTE INT NOT NULL, " +
+	            "TIPO VARCHAR(30) NOT NULL, " +
+	            "DATA_CONSULENZA DATE NOT NULL, " +
+	            "ORA_CONSULENZA TIME NOT NULL, " +
+	            "NOTE VARCHAR(255), " +
+	            "FOREIGN KEY (ID_CLIENTE) REFERENCES CLIENTE(ID_CLIENTE), " +
+	            "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+	            ");";
 
-            stmt.execute(sqlDipendente);
-            stmt.execute(sqlCorso);
-            stmt.execute(sqlLezioneCorso);
-            stmt.execute(sqlIscrizioneCorso);
+	    // PERSONAL_TRAINER
+	    String sqlPersonalTrainer = "CREATE TABLE IF NOT EXISTS PERSONAL_TRAINER (" +
+	            "ID_DIPENDENTE INT PRIMARY KEY, " +
+	            "PARTITA_IVA VARCHAR(20), " +
+	            "ANNI_ESPERIENZA INT, " +
+	            "CERTIFICATI VARCHAR(255), " +
+	            "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+	            ");";
 
-            stmt.execute(sqlConsulenza);
-            stmt.execute(sqlPersonalTrainer);
-            stmt.execute(sqlIstruttoreCorso);
-            stmt.execute(sqlNutrizionista);
-            stmt.execute(sqlMacchinario);
+	    // ISTRUTTORE_CORSO
+	    String sqlIstruttoreCorso = "CREATE TABLE IF NOT EXISTS ISTRUTTORE_CORSO (" +
+	            "ID_DIPENDENTE INT PRIMARY KEY, " +
+	            "TIPO_CORSO_INSEGNATO VARCHAR(100) NOT NULL, " +
+	            "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+	            ");";
 
-            // POPOLAMENTO
-            popolaDipendenti(conn);
-            popolaSaleESpa(conn);
-            popolaSpogliatoi(conn);
-            popolaMacchinari(conn);
-            popolaCorsiELezioni(conn);
+	    // NUTRIZIONISTA
+	    String sqlNutrizionista = "CREATE TABLE IF NOT EXISTS NUTRIZIONISTA (" +
+	            "ID_DIPENDENTE INT PRIMARY KEY, " +
+	            "PARCELLA VARCHAR(50), " +
+	            "FOREIGN KEY (ID_DIPENDENTE) REFERENCES DIPENDENTE(ID_DIPENDENTE)" +
+	            ");";
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	    // MACCHINARIO
+	    String sqlMacchinario = "CREATE TABLE IF NOT EXISTS MACCHINARIO (" +
+	            "ID_MACCHINARIO INT AUTO_INCREMENT PRIMARY KEY, " +
+	            "NOME VARCHAR(100) NOT NULL, " +
+	            "MARCA VARCHAR(100), " +
+	            "CAPACITA_CARICO INT, " +
+	            "OCCUPATO BOOLEAN NOT NULL, " +
+	            "ID_SALA_PESI INT, " +
+	            "FOREIGN KEY (ID_SALA_PESI) REFERENCES SALA_PESI(ID_SALA)" +
+	            ");";
+
+	    stmt.execute(sqlConsulenza);
+	    stmt.execute(sqlPersonalTrainer);
+	    stmt.execute(sqlIstruttoreCorso);
+	    stmt.execute(sqlNutrizionista);
+	    stmt.execute(sqlMacchinario);
+	}
 
     // --- metodi di popolamento come li avevi, li lascio uguali ---
 
@@ -370,8 +383,21 @@ public class InizializzazioneDB {
     // --- corsi e lezioni (come avevi già) ---
 
     private static void popolaCorsiELezioni(Connection conn) throws SQLException {
-        if (!isTableEmpty(conn, "CORSO")) return;
+        if (!isTableEmpty(conn, "CORSO")) {
+            return;
+        }
 
+        // 1) inserisco i corsi base e recupero gli ID
+        int[] ids = inserisciCorsiBase(conn);
+        int idSpinning = ids[0];
+        int idPilates  = ids[1];
+        int idAcquaGym = ids[2];
+
+        // 2) inserisco le lezioni, solo se la tabella è vuota
+        inserisciLezioniBase(conn, idSpinning, idPilates, idAcquaGym);
+    }
+
+    private static int[] inserisciCorsiBase(Connection conn) throws SQLException {
         String sqlInsCorso =
                 "INSERT INTO CORSO (NOME, DESCRIZIONE, DURATA_MINUTI) VALUES (?, ?, ?)";
 
@@ -407,89 +433,104 @@ public class InizializzazioneDB {
             }
         }
 
-        if (isTableEmpty(conn, "LEZIONE_CORSO")) {
+        return new int[] { idSpinning, idPilates, idAcquaGym };
+    }
 
-            int istr1 = -1, istr2 = -1, istr3 = -1;
-            String sqlIstr = "SELECT ID_DIPENDENTE FROM DIPENDENTE " +
-                    "WHERE RUOLO = 'ISTRUTTORE_CORSO' ORDER BY ID_DIPENDENTE";
+    private static void inserisciLezioniBase(Connection conn,
+                                             int idSpinning,
+                                             int idPilates,
+                                             int idAcquaGym) throws SQLException {
 
-            try (Statement st = conn.createStatement();
-                 ResultSet rs = st.executeQuery(sqlIstr)) {
-                if (rs.next()) istr1 = rs.getInt(1);
-                if (rs.next()) istr2 = rs.getInt(1);
-                if (rs.next()) istr3 = rs.getInt(1);
+        if (!isTableEmpty(conn, "LEZIONE_CORSO")) {
+            return;
+        }
+
+        int istr1 = -1, istr2 = -1, istr3 = -1;
+        String sqlIstr = "SELECT ID_DIPENDENTE FROM DIPENDENTE " +
+                "WHERE RUOLO = 'ISTRUTTORE_CORSO' ORDER BY ID_DIPENDENTE";
+
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sqlIstr)) {
+            if (rs.next()) istr1 = rs.getInt(1);
+            if (rs.next()) istr2 = rs.getInt(1);
+            if (rs.next()) istr3 = rs.getInt(1);
+        }
+
+        int fallback = istr1 != -1 ? istr1 : (istr2 != -1 ? istr2 : istr3);
+
+        String sqlInsLez =
+                "INSERT INTO LEZIONE_CORSO " +
+                        "(ID_CORSO, DATA_LEZIONE, ORA_LEZIONE, POSTI_TOTALI, POSTI_PRENOTATI, ID_ISTRUTTORE) " +
+                        "VALUES (?, ?, ?, ?, 0, ?)";
+
+        try (java.sql.PreparedStatement psL = conn.prepareStatement(sqlInsLez)) {
+
+            java.time.LocalDate oggi = java.time.LocalDate.now();
+
+            // --- SPINNING (Lun/Mer/Ven 18:00) ---
+            if (idSpinning > 0) {
+                java.time.LocalDate lun = next(oggi, java.time.DayOfWeek.MONDAY);
+                java.time.LocalDate mer = next(oggi, java.time.DayOfWeek.WEDNESDAY);
+                java.time.LocalDate ven = next(oggi, java.time.DayOfWeek.FRIDAY);
+
+                psL.setInt(1, idSpinning);
+                psL.setDate(2, java.sql.Date.valueOf(lun));
+                psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                psL.setInt(4, 25);
+                psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                psL.executeUpdate();
+
+                psL.setInt(1, idSpinning);
+                psL.setDate(2, java.sql.Date.valueOf(mer));
+                psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                psL.setInt(4, 25);
+                psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                psL.executeUpdate();
+
+                psL.setInt(1, idSpinning);
+                psL.setDate(2, java.sql.Date.valueOf(ven));
+                psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                psL.setInt(4, 25);
+                psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                psL.executeUpdate();
             }
 
-            int fallback = istr1 != -1 ? istr1 : (istr2 != -1 ? istr2 : istr3);
+            // --- PILATES (Mar/Gio 19:00) ---
+            if (idPilates > 0) {
+                java.time.LocalDate mar = next(oggi, java.time.DayOfWeek.TUESDAY);
+                java.time.LocalDate gio = next(oggi, java.time.DayOfWeek.THURSDAY);
 
-            String sqlInsLez =
-                    "INSERT INTO LEZIONE_CORSO " +
-                            "(ID_CORSO, DATA_LEZIONE, ORA_LEZIONE, POSTI_TOTALI, POSTI_PRENOTATI, ID_ISTRUTTORE) " +
-                            "VALUES (?, ?, ?, ?, 0, ?)";
+                psL.setInt(1, idPilates);
+                psL.setDate(2, java.sql.Date.valueOf(mar));
+                psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
+                psL.setInt(4, 20);
+                psL.setInt(5, istr2 != -1 ? istr2 : fallback);
+                psL.executeUpdate();
 
-            try (java.sql.PreparedStatement psL = conn.prepareStatement(sqlInsLez)) {
+                psL.setInt(1, idPilates);
+                psL.setDate(2, java.sql.Date.valueOf(gio));
+                psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
+                psL.setInt(4, 20);
+                psL.setInt(5, istr2 != -1 ? istr2 : fallback);
+                psL.executeUpdate();
+            }
 
-                java.time.LocalDate oggi = java.time.LocalDate.now();
+            // --- ACQUAGYM (Sab 10:00) ---
+            if (idAcquaGym > 0) {
+                java.time.LocalDate sab = next(oggi, java.time.DayOfWeek.SATURDAY);
 
-                if (idSpinning > 0) {
-                    java.time.LocalDate lun = next(oggi, java.time.DayOfWeek.MONDAY);
-                    java.time.LocalDate mer = next(oggi, java.time.DayOfWeek.WEDNESDAY);
-                    java.time.LocalDate ven = next(oggi, java.time.DayOfWeek.FRIDAY);
-
-                    psL.setInt(1, idSpinning);
-                    psL.setDate(2, java.sql.Date.valueOf(lun));
-                    psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
-                    psL.setInt(4, 25);
-                    psL.setInt(5, istr1 != -1 ? istr1 : fallback);
-                    psL.executeUpdate();
-
-                    psL.setInt(1, idSpinning);
-                    psL.setDate(2, java.sql.Date.valueOf(mer));
-                    psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
-                    psL.setInt(4, 25);
-                    psL.setInt(5, istr1 != -1 ? istr1 : fallback);
-                    psL.executeUpdate();
-
-                    psL.setInt(1, idSpinning);
-                    psL.setDate(2, java.sql.Date.valueOf(ven));
-                    psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
-                    psL.setInt(4, 25);
-                    psL.setInt(5, istr1 != -1 ? istr1 : fallback);
-                    psL.executeUpdate();
-                }
-
-                if (idPilates > 0) {
-                    java.time.LocalDate mar = next(oggi, java.time.DayOfWeek.TUESDAY);
-                    java.time.LocalDate gio = next(oggi, java.time.DayOfWeek.THURSDAY);
-
-                    psL.setInt(1, idPilates);
-                    psL.setDate(2, java.sql.Date.valueOf(mar));
-                    psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
-                    psL.setInt(4, 20);
-                    psL.setInt(5, istr2 != -1 ? istr2 : fallback);
-                    psL.executeUpdate();
-
-                    psL.setInt(1, idPilates);
-                    psL.setDate(2, java.sql.Date.valueOf(gio));
-                    psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
-                    psL.setInt(4, 20);
-                    psL.setInt(5, istr2 != -1 ? istr2 : fallback);
-                    psL.executeUpdate();
-                }
-
-                if (idAcquaGym > 0) {
-                    java.time.LocalDate sab = next(oggi, java.time.DayOfWeek.SATURDAY);
-
-                    psL.setInt(1, idAcquaGym);
-                    psL.setDate(2, java.sql.Date.valueOf(sab));
-                    psL.setTime(3, java.sql.Time.valueOf("10:00:00"));
-                    psL.setInt(4, 15);
-                    psL.setInt(5, istr3 != -1 ? istr3 : fallback);
-                    psL.executeUpdate();
-                }
+                psL.setInt(1, idAcquaGym);
+                psL.setDate(2, java.sql.Date.valueOf(sab));
+                psL.setTime(3, java.sql.Time.valueOf("10:00:00"));
+                psL.setInt(4, 15);
+                psL.setInt(5, istr3 != -1 ? istr3 : fallback);
+                psL.executeUpdate();
             }
         }
     }
+
+    
+    
 
     private static int inserisciDip(java.sql.PreparedStatement ps,
                                     String nome, String cognome,

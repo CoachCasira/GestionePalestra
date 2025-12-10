@@ -1203,6 +1203,7 @@
       <node xmi:type="uml:OpaqueAction" xmi:id="_CRTBUNEcEfCDMMw9uZosLQ" name="Controlla armadietto" incoming="_HHhwcNEcEfCDMMw9uZosLQ" outgoing="_Z3NtQNEdEfCDMMw9uZosLQ">
         <handler xmi:type="uml:ExceptionHandler" xmi:id="_1lmjENEhEfCDMMw9uZosLQ"/>
         <handler xmi:type="uml:ExceptionHandler" xmi:id="_F-9XINEiEfCDMMw9uZosLQ"/>
+        <handler xmi:type="uml:ExceptionHandler" xmi:id="_t5CVENW4EfCDiOpyF8KGFQ"/>
       </node>
       <node xmi:type="uml:OpaqueAction" xmi:id="_EDySoNEcEfCDMMw9uZosLQ" name="Prenota consulenza" incoming="_5NRmoNEcEfCDMMw9uZosLQ" outgoing="_KDIekNEfEfCDMMw9uZosLQ"/>
       <node xmi:type="uml:OpaqueAction" xmi:id="_FT0XINEcEfCDMMw9uZosLQ" name="Fornisci i dati" incoming="_7VP_wNEcEfCDMMw9uZosLQ" outgoing="_lrycoNEfEfCDMMw9uZosLQ"/>
