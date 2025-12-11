@@ -2,11 +2,12 @@ package service;
 
 import java.util.List;
 
-import db.dao.CorsoDAO;
-import db.dao.CorsoDAO.CorsoInfo;
+
 import db.dao.PalestraDAO;
 import db.dao.PalestraDAO.MacchinarioInfo;
 import db.dao.PalestraDAO.SalaCorsoInfo;
+import db.dao.corso.CorsoDAO;
+import model.corsi.*;
 import model.Abbonamento;
 import model.Cliente;
 

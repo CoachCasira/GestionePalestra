@@ -31,8 +31,8 @@ public class ClienteSottoscriviAbbonamentoTest {
         );
     }
 
-    @Test
-    void sottoscriviAbbonamento_associaAbbonamentoEPagamento() {
+   @Test
+  public void sottoscriviAbbonamento_associaAbbonamentoEPagamento() {
         // ARRANGE
         Cliente cliente = creaClienteDiTest();
         Abbonamento abb = new AbbonamentoBasico();
@@ -54,7 +54,7 @@ public class ClienteSottoscriviAbbonamentoTest {
     }
 
     @Test
-    void sottoscriviAbbonamento_secondaVoltaSovrascriveQuelloVecchio() {
+  public  void sottoscriviAbbonamento_secondaVoltaSovrascriveQuelloVecchio() {
         Cliente cliente = creaClienteDiTest();
 
         // Primo abbonamento e pagamento

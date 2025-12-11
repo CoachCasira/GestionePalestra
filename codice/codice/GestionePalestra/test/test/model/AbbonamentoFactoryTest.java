@@ -2,6 +2,7 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 import org.junit.jupiter.api.Test;
 
 import model.Abbonamento;
@@ -12,7 +13,7 @@ import model.AbbonamentoCorsi;
 class AbbonamentoFactoryTest {
 
     @Test
-    void creaDaTipo_baseRitornaAbbonamentoBasico() {
+public  void creaDaTipo_baseRitornaAbbonamentoBasico() {
         Abbonamento abb = Abbonamento.creaDaTipo("BASE", 1);
 
         assertNotNull(abb, "La factory non deve ritornare null per BASE");
@@ -21,7 +22,7 @@ class AbbonamentoFactoryTest {
     }
 
     @Test
-    void creaDaTipo_completoRitornaAbbonamentoCompleto() {
+ public   void creaDaTipo_completoRitornaAbbonamentoCompleto() {
         Abbonamento abb = Abbonamento.creaDaTipo("COMPLETO", 1);
 
         assertNotNull(abb, "La factory non deve ritornare null per COMPLETO");
@@ -30,7 +31,7 @@ class AbbonamentoFactoryTest {
     }
 
     @Test
-    void creaDaTipo_corsiRitornaAbbonamentoCorsi() {
+ public   void creaDaTipo_corsiRitornaAbbonamentoCorsi() {
         Abbonamento abb = Abbonamento.creaDaTipo("CORSI", 1);
  
         assertNotNull(abb, "La factory non deve ritornare null per CORSI");
@@ -39,7 +40,7 @@ class AbbonamentoFactoryTest {
     }
 
     @Test
-    void creaDaTipo_tipoSconosciutoRitornaNull() {
+   public void creaDaTipo_tipoSconosciutoRitornaNull() {
         Abbonamento abb = Abbonamento.creaDaTipo("BOH", 1);
         assertNull(abb, "Per tipo sconosciuto la factory dovrebbe ritornare null");
     }

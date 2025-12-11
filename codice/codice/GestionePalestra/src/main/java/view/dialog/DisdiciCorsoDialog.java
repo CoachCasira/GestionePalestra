@@ -1,11 +1,16 @@
 package view.dialog;
 
-import db.dao.CorsoDAO;
-import db.dao.CorsoDAO.IscrizioneInfo;
 import model.Cliente;
+
 import view.HomeView;
 
 import javax.swing.*;
+
+import db.dao.corso.CorsoDAO;
+import db.dao.corso.*;
+import model.corsi.*;
+import db.dao.*;
+
 import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -130,7 +135,7 @@ public class DisdiciCorsoDialog extends JDialog {
     // ==========================================================
     private void caricaIscrizioni() {
         try {
-            iscrizioniFuture = CorsoDAO.getIscrizioniFuturePerCliente(cliente.getIdCliente());
+            iscrizioniFuture = IscrizioneDAO.getIscrizioniFuturePerCliente(cliente.getIdCliente());
             listModel.clear();
 
             if (iscrizioniFuture.isEmpty()) {
@@ -216,7 +221,7 @@ public class DisdiciCorsoDialog extends JDialog {
         }
 
         try {
-            CorsoDAO.disiscriviClienteDaLezione(cliente.getIdCliente(), sel.idLezione);
+            IscrizioneDAO.disiscriviClienteDaLezione(cliente.getIdCliente(), sel.idLezione);
             view.dialog.ThemedDialog.showMessage(
                     this,
                     "Info",

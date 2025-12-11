@@ -2,14 +2,16 @@ package controller;
 
 import db.dao.AbbonamentoDAO;
 
-import db.dao.CorsoDAO;
-import db.dao.CorsoDAO.CorsoInfo;
 import db.dao.ConsulenzaDAO;
 import db.dao.PalestraDAO;
 import db.dao.PalestraDAO.MacchinarioInfo;
 import db.dao.PalestraDAO.SalaCorsoInfo;
+import db.dao.corso.CorsoDAO;
+import model.corsi.*;
 import model.Abbonamento;
 import model.Cliente;
+import db.dao.*;
+import db.dao.corso.*;
 
 import java.util.List;
 
@@ -92,7 +94,7 @@ public class HomeController {
     /** Vedi corsi prenotati */
     public void handleVediCorsi() {
         try {
-            String testo = CorsoDAO.buildDettaglioIscrizioniPerCliente(cliente.getIdCliente());
+            String testo = IscrizioneDAO.buildDettaglioIscrizioniPerCliente(cliente.getIdCliente());
 
             // Nascondo la Home mentre è aperta la finestra "Dettagli corsi"
             view.setVisible(false);
@@ -146,7 +148,7 @@ public class HomeController {
                 return;
             }
 
-            if (CorsoDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
+            if (IscrizioneDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
                 view.mostraMessaggioErrore(
                         "Non puoi disdire l'abbonamento perché hai corsi futuri prenotati.");
                 return;
@@ -222,7 +224,7 @@ public class HomeController {
     public void handleApriDisdettaCorso() {
         try {
             // analogo controllo per i corsi futuri
-            if (!CorsoDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
+            if (!IscrizioneDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
                 view.mostraMessaggioInfo(
                         "Non hai corsi futuri prenotati da poter disdire.");
                 return;

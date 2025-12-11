@@ -1,9 +1,7 @@
 package controller;
 
-import db.dao.CorsoDAO;
-import db.dao.CorsoDAO.CorsoInfo;
-import db.dao.CorsoDAO.LezioneInfo;
 import model.Cliente;
+
 import view.HomeView;
 import view.PrenotaCorsoView;
 import view.dialog.ThemedDialog;
@@ -13,6 +11,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import db.dao.corso.CorsoDAO;
+import model.corsi.*;
+import db.dao.corso.*;
 public class PrenotaCorsoController {
 
     private final PrenotaCorsoView view;
@@ -32,7 +33,7 @@ public class PrenotaCorsoController {
     private void caricaCorsi() {
         try {
             // 1) prima di tutto aggiorno le date delle lezioni al presente/futuro
-            CorsoDAO.aggiornaDateLezioniAllaSettimanaCorrente();
+            LezioneDAO.aggiornaDateLezioniAllaSettimanaCorrente();
         } catch (Exception e) {
             // se fallisce non blocco tutto, ma lo loggo
             e.printStackTrace();
@@ -82,7 +83,7 @@ public class PrenotaCorsoController {
         try {
             lezioniCorsoSelezionato.clear();
             lezioniCorsoSelezionato.addAll(
-                    CorsoDAO.getLezioniPerCorso(corso.idCorso)
+                    LezioneDAO.getLezioniPerCorso(corso.idCorso)
             );
 
             String[] righe = lezioniCorsoSelezionato.stream()
@@ -129,7 +130,7 @@ public class PrenotaCorsoController {
         // controlli
         try {
             // posti disponibili?
-            if (!CorsoDAO.haPostiDisponibili(lezione.idLezione)) {
+            if (!IscrizioneDAO.haPostiDisponibili(lezione.idLezione)) {
                 ThemedDialog.showMessage(view,
                         "Posti esauriti",
                         "Per questa data del corso i posti sono terminati.\n" +
@@ -145,7 +146,7 @@ public class PrenotaCorsoController {
             LocalTime ora  = lezione.ora;
             int durata     = lezione.durataMinuti;
 
-            if (CorsoDAO.esisteConflittoPerCliente(
+            if (IscrizioneDAO.esisteConflittoPerCliente(
                     cliente.getIdCliente(), data, ora, durata)) {
 
                 ThemedDialog.showMessage(view,
@@ -157,7 +158,7 @@ public class PrenotaCorsoController {
             }
 
             // iscrizione effettiva
-            CorsoDAO.iscriviClienteALezione(cliente.getIdCliente(), lezione.idLezione);
+            IscrizioneDAO.iscriviClienteALezione(cliente.getIdCliente(), lezione.idLezione);
 
             String msg = String.format(
                     "Iscrizione completata.\n\nCorso: %s\nData: %s ore %s\nIstruttore: %s\nDurata: %d minuti",
