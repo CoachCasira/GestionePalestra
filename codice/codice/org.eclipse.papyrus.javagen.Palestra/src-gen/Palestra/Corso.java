@@ -18,7 +18,7 @@ public class Corso {
 	/**
 	 * 
 	 */
-	public String tipo;
+	public TipoCorso tipo;
 	/**
 	 * 
 	 */
@@ -43,6 +43,10 @@ public class Corso {
 	 * 
 	 */
 	public Cliente partecipanti;
+	/**
+	 * 
+	 */
+	public TipoCorso tipocorso;
 
 	/**
 	 * 

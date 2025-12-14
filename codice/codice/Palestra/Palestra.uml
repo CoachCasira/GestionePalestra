@@ -288,9 +288,7 @@
       <ownedEnd xmi:type="uml:Property" xmi:id="_8CPK_8e5EfCaM4vwKxGouA" name="cliente" type="_8CN8Yce5EfCaM4vwKxGouA" association="_8CPK98e5EfCaM4vwKxGouA"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_8CPLAMe5EfCaM4vwKxGouA" name="Corso">
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_8CPLAce5EfCaM4vwKxGouA" name="tipo">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_8CPLAce5EfCaM4vwKxGouA" name="tipo" type="_S40soNkREfCLvNutfRTnnw"/>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_8CPLAse5EfCaM4vwKxGouA" name="durata">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       </ownedAttribute>
@@ -306,6 +304,10 @@
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_8CPLCMe5EfCaM4vwKxGouA" name="istruttore" type="_8CPLI8e5EfCaM4vwKxGouA"/>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_8CPLCce5EfCaM4vwKxGouA" name="partecipanti" type="_8CN8Yce5EfCaM4vwKxGouA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_iP2EgNkSEfCLvNutfRTnnw" name="tipocorso" type="_S40soNkREfCLvNutfRTnnw" association="_iPzBMNkSEfCLvNutfRTnnw">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_iP2rkNkSEfCLvNutfRTnnw"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_iP2rkdkSEfCLvNutfRTnnw" value="1"/>
+      </ownedAttribute>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_8CPLCse5EfCaM4vwKxGouA" name="aggiungiPartecipante"/>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_8CPLC8e5EfCaM4vwKxGouA" name="rimuoviPartecipante"/>
       <nestedClassifier xmi:type="uml:Class" xmi:id="_8CPLDMe5EfCaM4vwKxGouA" name="Class1"/>
@@ -768,6 +770,9 @@
       <nestedClassifier xmi:type="uml:DataType" xmi:id="_8CQYsse5EfCaM4vwKxGouA" name="importo,metodo"/>
       <nestedClassifier xmi:type="uml:DataType" xmi:id="_8CQYs8e5EfCaM4vwKxGouA" name="else"/>
       <nestedClassifier xmi:type="uml:DataType" xmi:id="_8CQYtMe5EfCaM4vwKxGouA" name="else"/>
+      <nestedClassifier xmi:type="uml:DataType" xmi:id="_HqXv0NkUEfCLvNutfRTnnw" name="ACQUAGYM">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_JB904NkUEfCLvNutfRTnnw" name="ACQUAGYM"/>
+      </nestedClassifier>
       <lifeline xmi:type="uml:Lifeline" xmi:id="_8CQYtce5EfCaM4vwKxGouA" name="applicazione" coveredBy="_bNMnIce5EfCElqa4LrZqyA _bNMnIse5EfCElqa4LrZqyA _bNMnJMe5EfCElqa4LrZqyA _bNMnJce5EfCElqa4LrZqyA _bNCPFse5EfCElqa4LrZqyA _bNMnJse5EfCElqa4LrZqyA _bNMnKMe5EfCElqa4LrZqyA _bNMnKce5EfCElqa4LrZqyA _bNDdMce5EfCElqa4LrZqyA _bNDdM8e5EfCElqa4LrZqyA _PdCWUMe6EfCaM4vwKxGouA _bNC2Ice5EfCElqa4LrZqyA _bNC2Ise5EfCElqa4LrZqyA _bNMnNce5EfCElqa4LrZqyA _bNMnNse5EfCElqa4LrZqyA _bNMnOse5EfCElqa4LrZqyA _bNMnPMe5EfCElqa4LrZqyA _bNMnP8e5EfCElqa4LrZqyA _bNMnQMe5EfCElqa4LrZqyA _VhFjcMe6EfCaM4vwKxGouA _bNMnR8e5EfCElqa4LrZqyA _bNMnSMe5EfCElqa4LrZqyA _bNDdNce5EfCElqa4LrZqyA _bNDdNse5EfCElqa4LrZqyA _bNC2Kce5EfCElqa4LrZqyA _bNDdMse5EfCElqa4LrZqyA _bNMnO8e5EfCElqa4LrZqyA"/>
       <lifeline xmi:type="uml:Lifeline" xmi:id="_8CQYtse5EfCaM4vwKxGouA" name="sceltaAbbonamento" coveredBy="_bNMnI8e5EfCElqa4LrZqyA _bNMnJMe5EfCElqa4LrZqyA _bNMnJce5EfCElqa4LrZqyA _bNBoAMe5EfCElqa4LrZqyA _bNCPEMe5EfCElqa4LrZqyA _bNCPEce5EfCElqa4LrZqyA _bNCPEse5EfCElqa4LrZqyA _bNCPE8e5EfCElqa4LrZqyA _bNCPFMe5EfCElqa4LrZqyA _bNCPFce5EfCElqa4LrZqyA _bNMnJ8e5EfCElqa4LrZqyA _bNMnKMe5EfCElqa4LrZqyA _bNMnKce5EfCElqa4LrZqyA _PdCWUMe6EfCaM4vwKxGouA _bNMnNce5EfCElqa4LrZqyA _bNMnNse5EfCElqa4LrZqyA _bNMnPce5EfCElqa4LrZqyA _bNMnPse5EfCElqa4LrZqyA _VhFjcMe6EfCaM4vwKxGouA"/>
       <lifeline xmi:type="uml:Lifeline" xmi:id="_8CQYt8e5EfCaM4vwKxGouA" name="pagamento" coveredBy="_bNMnJMe5EfCElqa4LrZqyA _bNMnJce5EfCElqa4LrZqyA _bNMnKMe5EfCElqa4LrZqyA _bNMnKce5EfCElqa4LrZqyA _PdCWUMe6EfCaM4vwKxGouA _bNC2I8e5EfCElqa4LrZqyA _bNC2JMe5EfCElqa4LrZqyA _bNC2Jce5EfCElqa4LrZqyA _bNC2Jse5EfCElqa4LrZqyA _bNC2KMe5EfCElqa4LrZqyA _bNMnNce5EfCElqa4LrZqyA _bNMnNse5EfCElqa4LrZqyA _bNMnOce5EfCElqa4LrZqyA _VhFjcMe6EfCaM4vwKxGouA _bNMnRse5EfCElqa4LrZqyA _bNC2J8e5EfCElqa4LrZqyA"/>
@@ -1288,6 +1293,20 @@
     <packagedElement xmi:type="uml:Interface" xmi:id="_XtMJ0Na8EfC_bKaIORDNjg" name=""/>
     <packagedElement xmi:type="uml:Usage" xmi:id="_kT-rMNa8EfC_bKaIORDNjg" client="_vtGZMNa0EfC_bKaIORDNjg" supplier="_OP5wANa8EfC_bKaIORDNjg"/>
     <packagedElement xmi:type="uml:Interface" xmi:id="_oCwDANa8EfC_bKaIORDNjg" name=""/>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_S40soNkREfCLvNutfRTnnw" name="TipoCorso" visibility="public">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_gnDXMNkREfCLvNutfRTnnw" name="ACQUAGYM">
+        <specification xmi:type="uml:InstanceValue" xmi:id="_j99BkNkREfCLvNutfRTnnw" name="ACQUAGYM" type="_HqXv0NkUEfCLvNutfRTnnw" instance="_7oK-sNkSEfCLvNutfRTnnw"/>
+      </ownedLiteral>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_JPzugNkSEfCLvNutfRTnnw" name="PILATES"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_LTMikNkSEfCLvNutfRTnnw" name="SPINNING"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_iPzBMNkSEfCLvNutfRTnnw" memberEnd="_iP2EgNkSEfCLvNutfRTnnw _iP2rktkSEfCLvNutfRTnnw">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_iP02YNkSEfCLvNutfRTnnw" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_iP02YdkSEfCLvNutfRTnnw" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_iP2rktkSEfCLvNutfRTnnw" name="corso" type="_8CPLAMe5EfCaM4vwKxGouA" association="_iPzBMNkSEfCLvNutfRTnnw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:EnumerationLiteral" xmi:id="_7oK-sNkSEfCLvNutfRTnnw" name="ACQUAGYM"/>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_8CQY0se5EfCaM4vwKxGouA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8CQY08e5EfCaM4vwKxGouA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
