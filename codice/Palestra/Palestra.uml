@@ -1307,6 +1307,24 @@
       <ownedEnd xmi:type="uml:Property" xmi:id="_iP2rktkSEfCLvNutfRTnnw" name="corso" type="_8CPLAMe5EfCaM4vwKxGouA" association="_iPzBMNkSEfCLvNutfRTnnw"/>
     </packagedElement>
     <packagedElement xmi:type="uml:EnumerationLiteral" xmi:id="_7oK-sNkSEfCLvNutfRTnnw" name="ACQUAGYM"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_HtV1cPg7EfC3zOktFYC5OQ" name="Controller">
+      <packageImport xmi:type="uml:PackageImport" xmi:id="_uPWisPg7EfC3zOktFYC5OQ" importedPackage="_Tzz4APg7EfC3zOktFYC5OQ"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="_IAx5YPg8EfC3zOktFYC5OQ" name="RegistrazioneController"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_PuAgQPg7EfC3zOktFYC5OQ" name="View">
+      <packageImport xmi:type="uml:PackageImport" xmi:id="_w3EL0Pg7EfC3zOktFYC5OQ" importedPackage="_HtV1cPg7EfC3zOktFYC5OQ"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="__uTs4Pg7EfC3zOktFYC5OQ" name="RegistrazioneView"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_Tzz4APg7EfC3zOktFYC5OQ" name="Service">
+      <packageImport xmi:type="uml:PackageImport" xmi:id="_vcTeAPg7EfC3zOktFYC5OQ" importedPackage="_bxfgQPg7EfC3zOktFYC5OQ"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="_R297YPg8EfC3zOktFYC5OQ" name="&lt;&lt;Interface>> RegistrazioneServiceIf"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="_Zgn0YPg8EfC3zOktFYC5OQ" name="RegistrazioneService"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="_dC_u8Pg8EfC3zOktFYC5OQ" name="RegistrazioneException"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_bxfgQPg7EfC3zOktFYC5OQ" name="&lt;&lt;Library>> log4j">
+      <packagedElement xmi:type="uml:Model" xmi:id="_jVF_IPg8EfC3zOktFYC5OQ" name="LogManager"/>
+      <packagedElement xmi:type="uml:Model" xmi:id="_lr6skPg8EfC3zOktFYC5OQ" name="Logger"/>
+    </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_8CQY0se5EfCaM4vwKxGouA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8CQY08e5EfCaM4vwKxGouA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
