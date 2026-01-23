@@ -1,5 +1,8 @@
 package controller;
 
+import action.LoginActions;
+import action.LoginViewContract;
+import action.ResetPasswordData;
 import model.Abbonamento;
 import model.Cliente;
 import org.apache.logging.log4j.LogManager;
@@ -9,29 +12,28 @@ import service.LoginService;
 import service.LoginServiceIf;
 import service.PasswordResetException;
 import view.HomeView;
-import view.LoginView;
 import view.RegistrazioneView;
 import view.SelezionaAbbonamentoView;
 
-public class LoginController {
+public class LoginController implements LoginActions {
 
     private static final Logger logger =
             LogManager.getLogger(LoginController.class);
 
-    private final LoginView view;
+    private final LoginViewContract view;
     private final LoginServiceIf service;
 
-    public LoginController(LoginView view) {
+    public LoginController(LoginViewContract view) {
         this.view = view;
         this.service = new LoginService();
         this.view.setController(this);
     }
 
     // ====================== LOGIN ======================
+    @Override
     public void handleLogin(String username, String password) {
         logger.info("Tentativo di login per username: {}", username);
 
-        // piccola validazione di UI, la lasciamo nel controller
         if (username == null || username.isEmpty() ||
                 password == null || password.isEmpty()) {
             view.mostraMessaggioErrore("Inserire sia username che password.");
@@ -68,21 +70,19 @@ public class LoginController {
     }
 
     // ====================== PASSWORD DIMENTICATA ======================
+    @Override
     public void handlePasswordDimenticata() {
 
-        // 1) chiedo email alla view
         String email = view.chiediEmailReset();
-        if (email == null) {
-            return; // annullato
-        }
+        if (email == null) return;
+
         email = email.trim().toLowerCase();
         if (email.isEmpty()) {
             view.mostraMessaggioErrore("Inserire un'email.");
             return;
         }
 
-        // 2) generazione token tramite service
-        String codiceGenerato = null;
+        String codiceGenerato;
         try {
             codiceGenerato = service.creaTokenReset(email);
         } catch (PasswordResetException e) {
@@ -90,7 +90,6 @@ public class LoginController {
             return;
         }
 
-        // per privacy il messaggio è sempre lo stesso; se abbiamo il codice, lo mostriamo tra parentesi
         StringBuilder msg = new StringBuilder(
                 "Ti è stato inviato un codice di reset all'email indicata.\n");
         if (codiceGenerato != null) {
@@ -100,15 +99,12 @@ public class LoginController {
         }
         view.mostraMessaggioInfo(msg.toString());
 
-        // 3) chiedo codice + nuova password alla view
-        LoginView.ResetPasswordData data = view.chiediCodiceENuovaPassword();
-        if (data == null) {
-            return; // annullato
-        }
+        ResetPasswordData data = view.chiediCodiceENuovaPassword();
+        if (data == null) return;
 
-        String codiceInserito = data.codice;
-        String nuovaPass      = data.nuovaPassword;
-        String confermaPass   = data.confermaPassword;
+        String codiceInserito = data.codice != null ? data.codice.trim() : "";
+        String nuovaPass      = data.nuovaPassword != null ? data.nuovaPassword : "";
+        String confermaPass   = data.confermaPassword != null ? data.confermaPassword : "";
 
         if (codiceInserito.isEmpty() || nuovaPass.isEmpty() || confermaPass.isEmpty()) {
             view.mostraMessaggioErrore("Tutti i campi sono obbligatori.");
@@ -123,7 +119,6 @@ public class LoginController {
             return;
         }
 
-        // 4) delego al service la verifica del token e l'aggiornamento password
         try {
             service.resetPasswordConToken(codiceInserito, nuovaPass);
             view.mostraMessaggioInfo(
@@ -138,6 +133,7 @@ public class LoginController {
     }
 
     // ====================== REGISTRAZIONE ======================
+    @Override
     public void handleRegistrazione() {
         logger.info("Apertura finestra di registrazione utente");
 

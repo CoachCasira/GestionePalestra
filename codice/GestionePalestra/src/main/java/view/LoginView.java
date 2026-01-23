@@ -1,13 +1,15 @@
 package view;
 
-import controller.LoginController;
+import action.LoginActions;
+import action.LoginViewContract;
+import action.ResetPasswordData;
 import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class LoginView extends JFrame {
+public class LoginView extends JFrame implements LoginViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,7 +20,7 @@ public class LoginView extends JFrame {
     private JButton btnLogin;
     private JButton btnRegistrati;
 
-    private LoginController controller;
+    private LoginActions controller;
 
     private static final Color DARK_BG   = new Color(20, 20, 20);
     private static final Color CARD_BG   = new Color(30, 30, 30);
@@ -30,7 +32,8 @@ public class LoginView extends JFrame {
         initUI();
     }
 
-    public void setController(LoginController controller) {
+    @Override
+    public void setController(LoginActions controller) {
         this.controller = controller;
     }
 
@@ -134,9 +137,7 @@ public class LoginView extends JFrame {
         lblForgot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblForgot.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (controller != null) {
-                    controller.handlePasswordDimenticata();
-                }
+                if (controller != null) controller.handlePasswordDimenticata();
             }
         });
 
@@ -185,8 +186,8 @@ public class LoginView extends JFrame {
         if (logoUrl != null) {
             ImageIcon icon = new ImageIcon(logoUrl);
             if (icon.getIconWidth() > 0 && icon.getIconHeight() > 0) {
-                Image scaled = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
-                logoLabel.setIcon(new ImageIcon(scaled));
+            	Image scaled = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+            	logoLabel.setIcon(new ImageIcon(scaled));
                 logoLabel.setText(null);
             } else {
                 logoLabel.setText("LOGO");
@@ -251,10 +252,12 @@ public class LoginView extends JFrame {
         controller.handleRegistrazione();
     }
 
+    @Override
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
+    @Override
     public void mostraMessaggioErrore(String msg) {
         ThemedDialog.showMessage(this, "Errore", msg, true);
     }
@@ -289,10 +292,7 @@ public class LoginView extends JFrame {
         });
     }
 
-    /**
-     * Mostra un dialog tema scuro per chiedere l'email per il reset.
-     * Ritorna email (stringa) oppure null se l'utente annulla.
-     */
+    @Override
     public String chiediEmailReset() {
         final JDialog dialog = new JDialog(
                 this,
@@ -359,23 +359,7 @@ public class LoginView extends JFrame {
         return result[0];
     }
 
-    // Dati che la view rimanda al controller per il reset
-    public static class ResetPasswordData {
-        public final String codice;
-        public final String nuovaPassword;
-        public final String confermaPassword;
-
-        public ResetPasswordData(String codice, String nuovaPassword, String confermaPassword) {
-            this.codice = codice;
-            this.nuovaPassword = nuovaPassword;
-            this.confermaPassword = confermaPassword;
-        }
-    }
-
-    /**
-     * Dialog tema scuro per inserire codice + nuova password.
-     * Ritorna ResetPasswordData oppure null se l'utente annulla.
-     */
+    @Override
     public ResetPasswordData chiediCodiceENuovaPassword() {
         final JDialog dialog = new JDialog(
                 this,

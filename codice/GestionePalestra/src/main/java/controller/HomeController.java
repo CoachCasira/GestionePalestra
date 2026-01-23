@@ -1,29 +1,25 @@
 package controller;
 
-import db.dao.AbbonamentoDAO;
+import action.HomeAction;
 
+import db.dao.AbbonamentoDAO;
 import db.dao.ConsulenzaDAO;
-import db.dao.PalestraDAO;
-import db.dao.PalestraDAO.MacchinarioInfo;
-import db.dao.PalestraDAO.SalaCorsoInfo;
 import db.dao.corso.CorsoDAO;
-import model.corsi.*;
+import db.dao.corso.IscrizioneDAO;
+
 import model.Abbonamento;
 import model.Cliente;
-import db.dao.*;
-import db.dao.corso.*;
-
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import service.PanoramicaPalestraService;
+import service.PanoramicaPalestraServiceIf;
+
 import view.*;
 import view.dialog.*;
-import service.PanoramicaPalestraServiceIf;
-import service.PanoramicaPalestraService;
 
-
-public class HomeController {
+public class HomeController implements HomeAction {
 
     private static final Logger logger =
             LogManager.getLogger(HomeController.class);
@@ -32,14 +28,27 @@ public class HomeController {
     private final Cliente cliente;
     private final PanoramicaPalestraServiceIf panoramicaService;
 
-
     public HomeController(HomeView view, Cliente cliente) {
         this.view = view;
         this.cliente = cliente;
         this.panoramicaService = new PanoramicaPalestraService();
-        this.view.setController(this);
+
+        // registro le azioni: la view non conosce più il controller concreto
+        this.view.setAction(this);
     }
 
+    // ====== implementazione HomeAction (delegate ai vecchi metodi handle) ======
+
+    @Override public void onPrenotaConsulenza() { handlePrenotaConsulenza(); }
+    @Override public void onPrenotaCorso() { handlePrenotaCorso(); }
+    @Override public void onVediAbbonamento() { handleVediAbbonamento(); }
+    @Override public void onVediCorsi() { handleVediCorsi(); }
+    @Override public void onVediConsulenza() { handleVediConsulenza(); }
+    @Override public void onDisdiciAbbonamento() { handleDisdiciAbbonamento(); }
+    @Override public void onLogout() { handleLogout(); }
+    @Override public void onApriDisdettaConsulenza() { handleApriDisdettaConsulenza(); }
+    @Override public void onApriDisdettaCorso() { handleApriDisdettaCorso(); }
+    @Override public void onPanoramicaPalestra() { handlePanoramicaPalestra(); }
 
     /** Apertura schermata prenotazione consulenza (chiude la Home) */
     public void handlePrenotaConsulenza() {
@@ -84,10 +93,8 @@ public class HomeController {
             return;
         }
 
-        // nascondo la Home mentre è aperta la finestra di dettaglio
         view.setVisible(false);
         view.mostraDettaglioAbbonamento(abb);
-        // quando il dialog viene chiuso, torno a mostrare la Home
         view.setVisible(true);
     }
 
@@ -95,14 +102,8 @@ public class HomeController {
     public void handleVediCorsi() {
         try {
             String testo = IscrizioneDAO.buildDettaglioIscrizioniPerCliente(cliente.getIdCliente());
-
-            // Nascondo la Home mentre è aperta la finestra "Dettagli corsi"
             view.setVisible(false);
-
-            // Questo metodo apre un JDialog MODALE: ritorna solo quando il dialog viene chiuso
             view.mostraDettaglioCorsi(testo);
-
-            // Quando il dialog è stato chiuso (tasto "Chiudi" o disiscrizione), ri-mosto la Home
             view.setVisible(true);
 
         } catch (Exception e) {
@@ -111,20 +112,12 @@ public class HomeController {
         }
     }
 
-
     /** Vedi consulenze prenotate */
     public void handleVediConsulenza() {
         try {
-            String dettaglio = ConsulenzaDAO
-                    .buildDettaglioConsulenzePerCliente(cliente.getIdCliente());
-
-            // nascondo la Home mentre il dialog è aperto
+            String dettaglio = ConsulenzaDAO.buildDettaglioConsulenzePerCliente(cliente.getIdCliente());
             view.setVisible(false);
-
-            // dialog modale: ritorna qui solo quando viene chiuso
             view.mostraDettaglioConsulenza(dettaglio);
-
-            // quando il dialog viene chiuso, ri-mosto la Home
             view.setVisible(true);
 
         } catch (Exception e) {
@@ -202,10 +195,8 @@ public class HomeController {
     /** Apertura dialog disdetta consulenza */
     public void handleApriDisdettaConsulenza() {
         try {
-            // se non ci sono consulenze future → solo messaggio, niente dialog
             if (!ConsulenzaDAO.esistonoConsulenzeFuturePerCliente(cliente.getIdCliente())) {
-                view.mostraMessaggioInfo(
-                        "Non hai consulenze future prenotate da poter disdire.");
+                view.mostraMessaggioInfo("Non hai consulenze future prenotate da poter disdire.");
                 return;
             }
         } catch (Exception e) {
@@ -223,10 +214,8 @@ public class HomeController {
     /** Apertura dialog disdetta corso */
     public void handleApriDisdettaCorso() {
         try {
-            // analogo controllo per i corsi futuri
             if (!IscrizioneDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
-                view.mostraMessaggioInfo(
-                        "Non hai corsi futuri prenotati da poter disdire.");
+                view.mostraMessaggioInfo("Non hai corsi futuri prenotati da poter disdire.");
                 return;
             }
         } catch (Exception e) {
@@ -241,9 +230,6 @@ public class HomeController {
         dialog.setVisible(true);
     }
 
-    // ==========================================================
-    //  NUOVA FUNZIONALITÀ: VISIONE / PANORAMICA PALESTRA
-    // ==========================================================
     public void handlePanoramicaPalestra() {
         Abbonamento abb = cliente.getAbbonamento();
         if (abb == null) {
@@ -274,5 +260,4 @@ public class HomeController {
                     "Riprova più tardi.");
         }
     }
-
 }
