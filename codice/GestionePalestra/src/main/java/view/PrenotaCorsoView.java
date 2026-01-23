@@ -1,12 +1,14 @@
 package view;
 
-import controller.PrenotaCorsoController;
+import action.PrenotaCorsoAction;
+import action.PrenotaCorsoViewContract;
 import model.Cliente;
+import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PrenotaCorsoView extends JFrame {
+public class PrenotaCorsoView extends JFrame implements PrenotaCorsoViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,7 +19,10 @@ public class PrenotaCorsoView extends JFrame {
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
     private final Cliente cliente;
-    private PrenotaCorsoController controller;
+
+    // prima: PrenotaCorsoController controller;
+    // ora: solo interfaccia azioni
+    private PrenotaCorsoAction action;
 
     private JList<String> listaCorsi;
     private DefaultListModel<String> modelCorsi;
@@ -35,15 +40,15 @@ public class PrenotaCorsoView extends JFrame {
         initUI();
     }
 
-    public void setController(PrenotaCorsoController controller) {
-        this.controller = controller;
+    @Override
+    public void setAction(PrenotaCorsoAction action) {
+        this.action = action;
     }
 
     private void initUI() {
         setTitle("Prenota corso");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // stessa dimensione di Home/Login
         setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -74,7 +79,7 @@ public class PrenotaCorsoView extends JFrame {
 
         main.add(header, BorderLayout.NORTH);
 
-        // =============== CARD CENTRALE (scrollabile, 1 colonna) ===============
+        // =============== CARD CENTRALE (scrollabile) ===============
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -145,7 +150,6 @@ public class PrenotaCorsoView extends JFrame {
         card.add(scrollLezioni);
         card.add(Box.createVerticalGlue());
 
-        // scroll che contiene la card
         JScrollPane scrollCard = new JScrollPane(
                 card,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -172,22 +176,21 @@ public class PrenotaCorsoView extends JFrame {
 
         // =============== LISTENER ===============
         listaCorsi.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && controller != null) {
+            if (!e.getValueIsAdjusting() && action != null) {
                 int idx = listaCorsi.getSelectedIndex();
-                controller.handleCorsoSelezionato(idx);
+                action.onCorsoSelezionato(idx);
             }
         });
 
         btnConferma.addActionListener(e -> {
-            if (controller != null) controller.handleConfermaIscrizione();
+            if (action != null) action.onConfermaIscrizione();
         });
 
         btnAnnulla.addActionListener(e -> {
-            if (controller != null) controller.handleAnnulla();
+            if (action != null) action.onAnnulla();
         });
     }
 
-    // ========= factory bottoni =========
     private JButton creaBottoneArancione(String testo) {
         JButton b = new JButton(testo);
         b.setBackground(ORANGE);
@@ -218,11 +221,13 @@ public class PrenotaCorsoView extends JFrame {
         return b;
     }
 
-    // ========= API usate dal controller =========
+    // ========= API contract =========
+    @Override
     public Cliente getCliente() {
         return cliente;
     }
 
+    @Override
     public void setCorsi(String[] nomi) {
         modelCorsi.clear();
         if (nomi != null) {
@@ -233,11 +238,13 @@ public class PrenotaCorsoView extends JFrame {
         txtDescrizioneCorso.setText("");
     }
 
+    @Override
     public void setDescrizioneCorso(String testo) {
         txtDescrizioneCorso.setText(testo);
         txtDescrizioneCorso.setCaretPosition(0);
     }
 
+    @Override
     public void setLezioni(String[] righe) {
         modelLezioni.clear();
         if (righe != null) {
@@ -246,11 +253,28 @@ public class PrenotaCorsoView extends JFrame {
         listaLezioni.clearSelection();
     }
 
+    @Override
     public int getIndiceCorsoSelezionato() {
         return listaCorsi.getSelectedIndex();
     }
 
+    @Override
     public int getIndiceLezioneSelezionata() {
         return listaLezioni.getSelectedIndex();
+    }
+
+    @Override
+    public void mostraInfo(String titolo, String messaggio) {
+        ThemedDialog.showMessage(this, titolo, messaggio, false);
+    }
+
+    @Override
+    public void mostraErrore(String titolo, String messaggio) {
+        ThemedDialog.showMessage(this, titolo, messaggio, true);
+    }
+
+    @Override
+    public void close() {
+        dispose();
     }
 }

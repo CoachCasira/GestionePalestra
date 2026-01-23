@@ -1,13 +1,14 @@
 package view;
 
-import controller.SelezionaAbbonamentoController;
+import action.SelezionaAbbonamentoActions;
+import action.SelezionaAbbonamentoViewContract;
 import model.Cliente;
 import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SelezionaAbbonamentoView extends JFrame {
+public class SelezionaAbbonamentoView extends JFrame implements SelezionaAbbonamentoViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,7 +26,7 @@ public class SelezionaAbbonamentoView extends JFrame {
 
     private JTextArea txtDettagli;
 
-    private SelezionaAbbonamentoController controller;
+    private SelezionaAbbonamentoActions actions;
 
     // Costruttore usato normalmente
     public SelezionaAbbonamentoView() {
@@ -33,13 +34,13 @@ public class SelezionaAbbonamentoView extends JFrame {
     }
 
     // Costruttore compatibile con: new SelezionaAbbonamentoView(cliente)
-    // (il Cliente non viene usato nella View, ma serve per non rompere il LoginController)
     public SelezionaAbbonamentoView(Cliente cliente) {
-        this(); // richiama il costruttore senza argomenti
+        this();
     }
 
-    public void setController(SelezionaAbbonamentoController controller) {
-        this.controller = controller;
+    @Override
+    public void setActions(SelezionaAbbonamentoActions actions) {
+        this.actions = actions;
     }
 
     private void initUI() {
@@ -134,7 +135,7 @@ public class SelezionaAbbonamentoView extends JFrame {
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
         btnProcedi = creaBottoneArancione("Procedi al pagamento");
-        btnProcedi.setEnabled(false); // fino a quando non selezioni un tipo
+        btnProcedi.setEnabled(false);
 
         btnAnnulla = creaBottoneSoloBordo("Annulla / Logout");
 
@@ -150,14 +151,14 @@ public class SelezionaAbbonamentoView extends JFrame {
         rbCorsi.addActionListener(e -> aggiornaDettagli("CORSI"));
 
         btnProcedi.addActionListener(e -> {
-            if (controller != null) {
+            if (actions != null) {
                 String tipo = getTipoSelezionato();
-                if (tipo != null) controller.handleProcedi(tipo);
+                if (tipo != null) actions.onProcedi(tipo);
             }
         });
 
         btnAnnulla.addActionListener(e -> {
-            if (controller != null) controller.handleAnnulla();
+            if (actions != null) actions.onAnnulla();
         });
     }
 
@@ -198,7 +199,6 @@ public class SelezionaAbbonamentoView extends JFrame {
         return null;
     }
 
-    // ---- factory bottoni ----
     private JButton creaBottoneArancione(String testo) {
         JButton b = new JButton(testo);
         b.setBackground(ORANGE);
@@ -208,14 +208,8 @@ public class SelezionaAbbonamentoView extends JFrame {
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE_HO);
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(ORANGE_HO); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(ORANGE); }
         });
         return b;
     }
@@ -229,27 +223,29 @@ public class SelezionaAbbonamentoView extends JFrame {
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(new Color(40, 40, 40));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(DARK_BG);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(new Color(40, 40, 40)); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(DARK_BG); }
         });
         return b;
     }
 
-    // metodi per controller
-    // metodi per controller
+    @Override
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
+    @Override
     public void mostraMessaggioErrore(String msg) {
         ThemedDialog.showMessage(this, "Errore", msg, true);
     }
 
-}
+    @Override
+    public void close() {
+        dispose();
+    }
 
+    @Override
+    public void showView() {
+        setVisible(true);
+    }
+}

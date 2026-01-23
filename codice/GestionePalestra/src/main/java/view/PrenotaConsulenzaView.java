@@ -1,12 +1,14 @@
 package view;
 
-import controller.PrenotaConsulenzaController;
+import action.PrenotaConsulenzaAction;
+import action.PrenotaConsulenzaViewContract;
 import model.Cliente;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Window;
 
-public class PrenotaConsulenzaView extends JFrame {
+public class PrenotaConsulenzaView extends JFrame implements PrenotaConsulenzaViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,7 +19,7 @@ public class PrenotaConsulenzaView extends JFrame {
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
     private final Cliente cliente;
-    private PrenotaConsulenzaController controller;
+    private PrenotaConsulenzaAction controller; // <-- ora è Action, non Controller concreto
 
     private JRadioButton rbPT;
     private JRadioButton rbNutri;
@@ -38,7 +40,7 @@ public class PrenotaConsulenzaView extends JFrame {
         initUI();
     }
 
-    public void setController(PrenotaConsulenzaController controller) {
+    public void setController(PrenotaConsulenzaAction controller) {
         this.controller = controller;
     }
 
@@ -46,7 +48,6 @@ public class PrenotaConsulenzaView extends JFrame {
         setTitle("Prenota consulenza");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // stessa dimensione di Home / Login
         setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -55,7 +56,6 @@ public class PrenotaConsulenzaView extends JFrame {
         main.setBackground(DARK_BG);
         setContentPane(main);
 
-        // ===== HEADER =======================================================
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(DARK_BG);
@@ -77,7 +77,6 @@ public class PrenotaConsulenzaView extends JFrame {
 
         main.add(header, BorderLayout.NORTH);
 
-        // ===== CARD CENTRALE (scrollabile) ==================================
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -90,7 +89,6 @@ public class PrenotaConsulenzaView extends JFrame {
 
         int row = 0;
 
-        // --- Tipo consulenza ---
         rbPT   = new JRadioButton("Consulenza con Personal Trainer");
         rbNutri= new JRadioButton("Consulenza con Nutrizionista");
         rbIstr = new JRadioButton("Consulenza con Istruttore di corso");
@@ -109,7 +107,6 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(rbIstr, gbc);
 
-        // --- Descrizione tipo (scroll, altezza fissa) ---
         txtDescrizioneTipo = new JTextArea(4, 30);
         txtDescrizioneTipo.setEditable(false);
         txtDescrizioneTipo.setLineWrap(true);
@@ -134,7 +131,6 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(scrollDescrTipo, gbc);
 
-        // --- Data, ora ---
         JLabel lblData = new JLabel("Data (yyyy-MM-dd):");
         lblData.setForeground(TEXT_GRAY);
         JLabel lblOra = new JLabel("Ora (HH:mm):");
@@ -153,7 +149,6 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(rigaDataOra, gbc);
 
-        // --- Dipendente + descrizione dipendente ---
         JLabel lblDip = new JLabel("Dipendente:");
         lblDip.setForeground(TEXT_GRAY);
 
@@ -193,7 +188,6 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(scrollDescrDip, gbc);
 
-        // --- Note opzionali (scroll) ---
         txtNote = new JTextArea(3, 30);
         txtNote.setLineWrap(true);
         txtNote.setWrapStyleWord(true);
@@ -217,7 +211,6 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(scrollNote, gbc);
 
-        // Scrollpane che contiene tutta la card
         JScrollPane scrollCard = new JScrollPane(
                 card,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -227,7 +220,6 @@ public class PrenotaConsulenzaView extends JFrame {
         scrollCard.getViewport().setBackground(CARD_BG);
         main.add(scrollCard, BorderLayout.CENTER);
 
-        // ===== FOOTER BOTTONI ===============================================
         JPanel buttons = new JPanel();
         buttons.setBackground(DARK_BG);
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
@@ -241,7 +233,6 @@ public class PrenotaConsulenzaView extends JFrame {
 
         main.add(buttons, BorderLayout.SOUTH);
 
-        // ===== LISTENER =====================================================
         rbPT.addActionListener(e -> {
             if (controller != null) controller.handleTipoSelezionato("PERSONAL_TRAINER");
         });
@@ -267,7 +258,6 @@ public class PrenotaConsulenzaView extends JFrame {
             if (controller != null) controller.handleAnnulla();
         });
 
-        // selezione di default
         rbPT.setSelected(true);
     }
 
@@ -307,35 +297,43 @@ public class PrenotaConsulenzaView extends JFrame {
         return b;
     }
 
-    // ===== getter usati dal controller =====
+    // ===== PrenotaConsulenzaViewContract =====
+
+    @Override
     public String getTipoSelezionato() {
         if (rbNutri.isSelected()) return "NUTRIZIONISTA";
         if (rbIstr.isSelected())  return "ISTRUTTORE_CORSO";
         return "PERSONAL_TRAINER";
     }
 
+    @Override
     public String getDataText() {
         return txtData.getText().trim();
     }
 
+    @Override
     public String getOraText() {
         return txtOra.getText().trim();
     }
 
+    @Override
     public String getDipendenteSelezionato() {
         Object o = comboDipendente.getSelectedItem();
         return o != null ? o.toString() : null;
     }
 
+    @Override
     public String getNote() {
         return txtNote.getText().trim();
     }
 
+    @Override
     public void setDescrizioneTipo(String testo) {
         txtDescrizioneTipo.setText(testo);
         txtDescrizioneTipo.setCaretPosition(0);
     }
 
+    @Override
     public void setDipendenti(String[] nomi) {
         comboDipendente.removeAllItems();
         if (nomi != null) {
@@ -343,11 +341,18 @@ public class PrenotaConsulenzaView extends JFrame {
         }
     }
 
+    @Override
     public void setDescrizioneDipendente(String testo) {
         txtDescrizioneDipendente.setText(testo);
         txtDescrizioneDipendente.setCaretPosition(0);
     }
 
+
+    @Override
+    public Window asWindow() {
+        return this;
+    }
+    
     public Cliente getCliente() {
         return cliente;
     }

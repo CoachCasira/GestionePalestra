@@ -1,6 +1,7 @@
 package view.dialog;
 
 import db.dao.ConsulenzaDAO;
+
 import db.dao.ConsulenzaDAO.ConsulenzaInfo;
 import model.Cliente;
 

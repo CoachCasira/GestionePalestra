@@ -1,6 +1,7 @@
 package view.dialog;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**

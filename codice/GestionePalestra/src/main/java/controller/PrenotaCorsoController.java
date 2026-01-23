@@ -1,10 +1,11 @@
 package controller;
 
+import action.PrenotaCorsoAction;
+import action.PrenotaCorsoViewContract;
 import model.Cliente;
-
+import model.corsi.CorsoInfo;
+import model.corsi.LezioneInfo;
 import view.HomeView;
-import view.PrenotaCorsoView;
-import view.dialog.ThemedDialog;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,30 +13,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import db.dao.corso.CorsoDAO;
-import model.corsi.*;
-import db.dao.corso.*;
-public class PrenotaCorsoController {
+import db.dao.corso.IscrizioneDAO;
+import db.dao.corso.LezioneDAO;
 
-    private final PrenotaCorsoView view;
+public class PrenotaCorsoController implements PrenotaCorsoAction {
+
+    private final PrenotaCorsoViewContract view;
     private final Cliente cliente;
 
     private final List<CorsoInfo> corsi = new ArrayList<>();
     private final List<LezioneInfo> lezioniCorsoSelezionato = new ArrayList<>();
 
-    public PrenotaCorsoController(PrenotaCorsoView view, Cliente cliente) {
+    public PrenotaCorsoController(PrenotaCorsoViewContract view, Cliente cliente) {
         this.view = view;
         this.cliente = cliente;
-        this.view.setController(this);
+
+        // la view conosce solo l’interfaccia
+        this.view.setAction(this);
 
         caricaCorsi();
     }
 
     private void caricaCorsi() {
         try {
-            // 1) prima di tutto aggiorno le date delle lezioni al presente/futuro
             LezioneDAO.aggiornaDateLezioniAllaSettimanaCorrente();
         } catch (Exception e) {
-            // se fallisce non blocco tutto, ma lo loggo
+            // non blocco tutto: al massimo i dati saranno meno “puliti”
             e.printStackTrace();
         }
 
@@ -50,23 +53,19 @@ public class PrenotaCorsoController {
             view.setCorsi(nomi);
 
             if (!corsi.isEmpty()) {
-                // selezione di default primo corso
-                view.getRootPane().requestFocus();
                 view.setDescrizioneCorso(corsi.get(0).descrizione +
                         "\n\nDurata: " + corsi.get(0).durataMinuti + " minuti.");
-                handleCorsoSelezionato(0);
+                onCorsoSelezionato(0);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            ThemedDialog.showMessage(view,
-                    "Errore",
-                    "Errore nel caricamento dei corsi dal database.",
-                    true);
+            view.mostraErrore("Errore", "Errore nel caricamento dei corsi dal database.");
         }
     }
-    /** Chiamato dalla view quando l’utente cambia selezione corso. */
-    public void handleCorsoSelezionato(int index) {
+
+    @Override
+    public void onCorsoSelezionato(int index) {
         if (index < 0 || index >= corsi.size()) {
             view.setDescrizioneCorso("");
             view.setLezioni(new String[0]);
@@ -96,52 +95,37 @@ public class PrenotaCorsoController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ThemedDialog.showMessage(view,
-                    "Errore",
-                    "Errore nel caricamento delle lezioni per il corso selezionato.",
-                    true);
+            view.mostraErrore("Errore",
+                    "Errore nel caricamento delle lezioni per il corso selezionato.");
             view.setLezioni(new String[0]);
         }
     }
 
-    /** Conferma iscrizione al corso/lezione selezionata. */
-    public void handleConfermaIscrizione() {
+    @Override
+    public void onConfermaIscrizione() {
         int idxCorso = view.getIndiceCorsoSelezionato();
         int idxLezione = view.getIndiceLezioneSelezionata();
 
         if (idxCorso < 0 || idxCorso >= corsi.size()) {
-            ThemedDialog.showMessage(view,
-                    "Errore",
-                    "Seleziona prima un corso.",
-                    true);
+            view.mostraErrore("Errore", "Seleziona prima un corso.");
             return;
         }
         if (idxLezione < 0 || idxLezione >= lezioniCorsoSelezionato.size()) {
-            ThemedDialog.showMessage(view,
-                    "Errore",
-                    "Seleziona una data/ora per il corso.",
-                    true);
+            view.mostraErrore("Errore", "Seleziona una data/ora per il corso.");
             return;
         }
 
         CorsoInfo corso = corsi.get(idxCorso);
         LezioneInfo lezione = lezioniCorsoSelezionato.get(idxLezione);
 
-        // controlli
         try {
-            // posti disponibili?
             if (!IscrizioneDAO.haPostiDisponibili(lezione.idLezione)) {
-                ThemedDialog.showMessage(view,
-                        "Posti esauriti",
-                        "Per questa data del corso i posti sono terminati.\n" +
-                        "Seleziona un altro orario.",
-                        true);
-                // ricarico lezioni (per aggiornare eventuali numeri)
-                handleCorsoSelezionato(idxCorso);
+                view.mostraErrore("Posti esauriti",
+                        "Per questa data del corso i posti sono terminati.\nSeleziona un altro orario.");
+                onCorsoSelezionato(idxCorso);
                 return;
             }
 
-            // conflitto per cliente (altri corsi nello stesso intervallo)
             LocalDate data = lezione.data;
             LocalTime ora  = lezione.ora;
             int durata     = lezione.durataMinuti;
@@ -149,15 +133,11 @@ public class PrenotaCorsoController {
             if (IscrizioneDAO.esisteConflittoPerCliente(
                     cliente.getIdCliente(), data, ora, durata)) {
 
-                ThemedDialog.showMessage(view,
-                        "Conflitto orario",
-                        "Hai già un altro corso prenotato in questo intervallo di tempo.\n" +
-                        "Scegli un orario differente.",
-                        true);
+                view.mostraErrore("Conflitto orario",
+                        "Hai già un altro corso prenotato in questo intervallo di tempo.\nScegli un orario differente.");
                 return;
             }
 
-            // iscrizione effettiva
             IscrizioneDAO.iscriviClienteALezione(cliente.getIdCliente(), lezione.idLezione);
 
             String msg = String.format(
@@ -166,25 +146,23 @@ public class PrenotaCorsoController {
                     lezione.nomeIstruttore, lezione.durataMinuti
             );
 
-            ThemedDialog.showMessage(view, "Info", msg, false);
+            view.mostraInfo("Info", msg);
 
-            // torno alla Home
-            view.dispose();
+            view.close();
             HomeView home = new HomeView(cliente);
             new HomeController(home, cliente);
             home.setVisible(true);
 
         } catch (Exception e) {
             e.printStackTrace();
-            ThemedDialog.showMessage(view,
-                    "Errore",
-                    "Si è verificato un errore durante l'iscrizione al corso.",
-                    true);
+            view.mostraErrore("Errore",
+                    "Si è verificato un errore durante l'iscrizione al corso.");
         }
     }
 
-    public void handleAnnulla() {
-        view.dispose();
+    @Override
+    public void onAnnulla() {
+        view.close();
         HomeView home = new HomeView(cliente);
         new HomeController(home, cliente);
         home.setVisible(true);

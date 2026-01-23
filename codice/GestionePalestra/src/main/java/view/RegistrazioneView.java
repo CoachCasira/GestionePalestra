@@ -1,13 +1,14 @@
 package view;
 
-import controller.RegistrazioneController;
+import action.RegistrazioneActions;
+import action.RegistrazioneViewContract;
 import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class RegistrazioneView extends JFrame {
+public class RegistrazioneView extends JFrame implements RegistrazioneViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,10 +33,16 @@ public class RegistrazioneView extends JFrame {
     private JButton btnConferma;
     private JButton btnAnnulla;
 
-    private RegistrazioneController controller;
+    // prima era "RegistrazioneController controller"
+    private RegistrazioneActions actions;
 
     public RegistrazioneView() {
         initUI();
+    }
+
+    @Override
+    public void setActions(RegistrazioneActions actions) {
+        this.actions = actions;
     }
 
     private void initUI() {
@@ -265,13 +272,9 @@ public class RegistrazioneView extends JFrame {
         return b;
     }
 
-    public void setController(RegistrazioneController controller) {
-        this.controller = controller;
-    }
-
     private void onConfermaClicked() {
-        if (controller == null) {
-            ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
+        if (actions == null) {
+            ThemedDialog.showMessage(this, "Errore", "Actions non impostate!", true);
             return;
         }
 
@@ -285,23 +288,35 @@ public class RegistrazioneView extends JFrame {
         String dataNascita  = txtDataNascita.getText().trim();
         String iban         = txtIban.getText().trim();
 
-        controller.handleConferma(username, password, nome, cognome,
+        actions.handleConferma(username, password, nome, cognome,
                 cf, luogoNascita, dataNascita, iban, email);
     }
 
     private void onAnnullaClicked() {
-        if (controller != null) {
-            controller.handleAnnulla();
+        if (actions != null) {
+            actions.handleAnnulla();
         } else {
             dispose();
         }
     }
 
+    @Override
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
+    @Override
     public void mostraMessaggioErrore(String msg) {
         ThemedDialog.showMessage(this, "Errore", msg, true);
+    }
+
+    @Override
+    public void close() {
+        dispose();
+    }
+
+    @Override
+    public Window asWindow() {
+        return this;
     }
 }

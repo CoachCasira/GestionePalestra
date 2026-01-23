@@ -1,6 +1,7 @@
 package view;
 
-import controller.PagamentoController;
+import action.PagamentoAction;
+import action.PagamentoViewContract;
 import model.Abbonamento;
 import model.Cliente;
 import view.dialog.ThemedDialog;
@@ -8,7 +9,7 @@ import view.dialog.ThemedDialog;
 import javax.swing.*;
 import java.awt.*;
 
-public class PagamentoView extends JFrame {
+public class PagamentoView extends JFrame implements PagamentoViewContract {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,7 +19,7 @@ public class PagamentoView extends JFrame {
     private static final Color ORANGE_HO = new Color(255, 170, 40);
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
-    private PagamentoController controller;
+    private PagamentoAction action;
 
     private JLabel lblTipo;
     private JLabel lblPrezzo;
@@ -36,8 +37,9 @@ public class PagamentoView extends JFrame {
         initUI();
     }
 
-    public void setController(PagamentoController controller) {
-        this.controller = controller;
+    @Override
+    public void setAction(PagamentoAction action) {
+        this.action = action;
     }
 
     private void initUI() {
@@ -51,7 +53,6 @@ public class PagamentoView extends JFrame {
         main.setBackground(DARK_BG);
         setContentPane(main);
 
-        // HEADER
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(DARK_BG);
@@ -62,8 +63,7 @@ public class PagamentoView extends JFrame {
         lblTitolo.setFont(new Font("SansSerif", Font.BOLD, 22));
         lblTitolo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblSotto = new JLabel(
-                "Controlla i dati dell'abbonamento e scegli il metodo di pagamento.");
+        JLabel lblSotto = new JLabel("Controlla i dati dell'abbonamento e scegli il metodo di pagamento.");
         lblSotto.setForeground(TEXT_GRAY);
         lblSotto.setFont(new Font("SansSerif", Font.PLAIN, 13));
         lblSotto.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -74,7 +74,6 @@ public class PagamentoView extends JFrame {
 
         main.add(header, BorderLayout.NORTH);
 
-        // CARD CENTRALE
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -106,22 +105,16 @@ public class PagamentoView extends JFrame {
         card.add(lblMetodo, gbc);
 
         gbc.gridy++;
-        comboMetodo = new JComboBox<>(new String[]{
-                "Carta di credito", "Bancomat", "Contanti"
-        });
-
-        // *** SISTEMA VISUALIZZAZIONE: sfondo bianco, testo nero, selezione iniziale ***
+        comboMetodo = new JComboBox<>(new String[]{"Carta di credito", "Bancomat", "Contanti"});
         comboMetodo.setSelectedIndex(0);
         comboMetodo.setBackground(Color.WHITE);
         comboMetodo.setForeground(Color.BLACK);
         comboMetodo.setFont(new Font("SansSerif", Font.PLAIN, 13));
         comboMetodo.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
-
         card.add(comboMetodo, gbc);
 
         main.add(card, BorderLayout.CENTER);
 
-        // FOOTER BOTTONI
         JPanel buttons = new JPanel();
         buttons.setBackground(DARK_BG);
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
@@ -135,16 +128,15 @@ public class PagamentoView extends JFrame {
 
         main.add(buttons, BorderLayout.SOUTH);
 
-        // listener
         btnPaga.addActionListener(e -> {
-            if (controller != null) {
+            if (action != null) {
                 String metodo = (String) comboMetodo.getSelectedItem();
-                controller.handlePaga(metodo);
+                action.handlePaga(metodo);
             }
         });
 
         btnAnnulla.addActionListener(e -> {
-            if (controller != null) controller.handleAnnulla();
+            if (action != null) action.handleAnnulla();
         });
     }
 
@@ -157,14 +149,8 @@ public class PagamentoView extends JFrame {
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE_HO);
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(ORANGE_HO); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(ORANGE); }
         });
         return b;
     }
@@ -178,28 +164,29 @@ public class PagamentoView extends JFrame {
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
         b.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(new Color(40, 40, 40));
-            }
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                b.setBackground(DARK_BG);
-            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { b.setBackground(new Color(40, 40, 40)); }
+            @Override public void mouseExited (java.awt.event.MouseEvent e) { b.setBackground(DARK_BG); }
         });
         return b;
     }
 
-    // metodi usati dal controller
+    // ===== Contract =====
+    @Override
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
+    @Override
     public void mostraMessaggioErrore(String msg) {
         ThemedDialog.showMessage(this, "Errore", msg, true);
     }
 
-
+    @Override
     public Cliente getCliente() { return cliente; }
+
+    @Override
     public Abbonamento getAbbonamento() { return abbonamento; }
+
+    @Override
+    public Component asComponent() { return this; }
 }

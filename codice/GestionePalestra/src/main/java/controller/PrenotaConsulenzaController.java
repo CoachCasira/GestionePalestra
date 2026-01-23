@@ -1,5 +1,7 @@
 package controller;
 
+import action.PrenotaConsulenzaAction;
+import action.PrenotaConsulenzaViewContract;
 import db.dao.ConsulenzaDAO;
 import db.dao.DipendenteDAO;
 import db.dao.DipendenteDAO.DipendenteInfo;
@@ -16,23 +18,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrenotaConsulenzaController {
+public class PrenotaConsulenzaController implements PrenotaConsulenzaAction {
 
-    private final PrenotaConsulenzaView view;
+    private final PrenotaConsulenzaViewContract view;
     private final Cliente cliente;
 
-    // mappa nome completo -> id dipendente, per la combo
-    private Map<String, Integer> mappaDipendenti = new HashMap<>();
+    private final Map<String, Integer> mappaDipendenti = new HashMap<>();
 
-    public PrenotaConsulenzaController(PrenotaConsulenzaView view, Cliente cliente) {
+    public PrenotaConsulenzaController(PrenotaConsulenzaViewContract view, Cliente cliente) {
         this.view = view;
         this.cliente = cliente;
-        this.view.setController(this);
 
-        // inizializza tipo default
+        // collega l'action alla view (senza dipendenza view->controller)
+        if (view instanceof PrenotaConsulenzaView) {
+            ((PrenotaConsulenzaView) view).setController(this);
+        }
+
         handleTipoSelezionato(view.getTipoSelezionato());
     }
 
+    @Override
     public void handleTipoSelezionato(String tipo) {
         String descr;
         String ruoloDb;
@@ -56,7 +61,7 @@ public class PrenotaConsulenzaController {
                 ruoloDb = "ISTRUTTORE_CORSO";
                 break;
 
-            default: // PERSONAL_TRAINER
+            default:
                 descr =
                         "Consulenza con Personal Trainer.\n" +
                         "Analisi obiettivi, valutazione iniziale e definizione\n" +
@@ -71,27 +76,27 @@ public class PrenotaConsulenzaController {
         try {
             List<DipendenteInfo> lista = DipendenteDAO.findByRuolo(ruoloDb);
             mappaDipendenti.clear();
+
             String[] nomi = new String[lista.size()];
             for (int i = 0; i < lista.size(); i++) {
                 DipendenteInfo info = lista.get(i);
                 nomi[i] = info.nomeCompleto;
                 mappaDipendenti.put(info.nomeCompleto, info.id);
             }
-            view.setDipendenti(nomi);
 
-            // reset descrizione dipendente quando cambio tipo
+            view.setDipendenti(nomi);
             view.setDescrizioneDipendente("");
 
         } catch (Exception e) {
             e.printStackTrace();
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Errore",
                     "Errore nel caricamento dei dipendenti dal database.",
                     true);
         }
     }
 
-    /** Chiamato dalla view quando l’utente cambia il dipendente nella combo */
+    @Override
     public void handleDipendenteSelezionato(String nomeCompleto) {
         if (nomeCompleto == null || nomeCompleto.isEmpty()) {
             view.setDescrizioneDipendente("");
@@ -114,15 +119,16 @@ public class PrenotaConsulenzaController {
         }
     }
 
+    @Override
     public void handleConfermaPrenotazione() {
-        String tipo    = view.getTipoSelezionato();   // PERSONAL_TRAINER / NUTRIZIONISTA / ISTRUTTORE_CORSO
+        String tipo    = view.getTipoSelezionato();
         String dataStr = view.getDataText();
         String oraStr  = view.getOraText();
         String nomeDip = view.getDipendenteSelezionato();
         String note    = view.getNote();
 
         if (dataStr.isEmpty() || oraStr.isEmpty() || nomeDip == null) {
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Errore",
                     "Compila data, ora e seleziona un dipendente.",
                     true);
@@ -132,10 +138,10 @@ public class PrenotaConsulenzaController {
         LocalDate data;
         LocalTime ora;
         try {
-            data = LocalDate.parse(dataStr);  // formato yyyy-MM-dd
-            ora  = LocalTime.parse(oraStr);   // formato HH:mm
+            data = LocalDate.parse(dataStr);
+            ora  = LocalTime.parse(oraStr);
         } catch (DateTimeParseException e) {
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Errore",
                     "Formato data/ora non valido. Usa yyyy-MM-dd e HH:mm.",
                     true);
@@ -144,7 +150,7 @@ public class PrenotaConsulenzaController {
 
         Integer idDip = mappaDipendenti.get(nomeDip);
         if (idDip == null) {
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Errore",
                     "Dipendente selezionato non valido.",
                     true);
@@ -152,13 +158,10 @@ public class PrenotaConsulenzaController {
         }
 
         try {
-            // controllo conflitto nel DB, considerando:
-            // - altre consulenze dello stesso cliente
-            // - altre consulenze dello stesso dipendente
             if (ConsulenzaDAO.esisteConflitto(
                     cliente.getIdCliente(), idDip, tipo, data, ora)) {
 
-                ThemedDialog.showMessage(view,
+                ThemedDialog.showMessage(view.asWindow(),
                         "Errore",
                         "Esiste già una consulenza nello stesso intervallo orario\n" +
                         "per il cliente o per il professionista selezionato.\n" +
@@ -167,7 +170,6 @@ public class PrenotaConsulenzaController {
                 return;
             }
 
-            // nessun conflitto → inserisco
             Consulenza nuova = new Consulenza(
                     cliente.getIdCliente(),
                     idDip,
@@ -178,12 +180,11 @@ public class PrenotaConsulenzaController {
             );
             ConsulenzaDAO.inserisci(nuova);
 
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Info",
                     "Consulenza prenotata con successo.\n\n" + nuova,
                     false);
 
-            // Torno all'area personale
             view.dispose();
             HomeView home = new HomeView(cliente);
             new HomeController(home, cliente);
@@ -191,15 +192,16 @@ public class PrenotaConsulenzaController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ThemedDialog.showMessage(view,
+            ThemedDialog.showMessage(view.asWindow(),
                     "Errore",
                     "Si è verificato un errore durante il salvataggio della consulenza.",
                     true);
         }
     }
 
+    @Override
     public void handleAnnulla() {
-        view.dispose();  // chiudo la schermata di prenotazione
+        view.dispose();
 
         HomeView home = new HomeView(cliente);
         new HomeController(home, cliente);
