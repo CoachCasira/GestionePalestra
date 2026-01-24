@@ -5,9 +5,14 @@ import db.GestioneDB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DipendenteDAO {
 
@@ -114,5 +119,149 @@ public class DipendenteDAO {
                 return sb.toString();
             }
         }
+    }
+
+    // ==========================================================
+    //  NUOVO: VALIDAZIONE DISPONIBILITÀ DIPENDENTE (ORARIO_DISP)
+    // ==========================================================
+
+    /**
+     * Verifica se un dipendente è disponibile nella fascia richiesta, in base al campo ORARIO_DISP.
+     *
+     * Supporta formati tipo:
+     * - "Sab 9:00-12:00"
+     * - "Lun-Ven 9:00-13:00"
+     * - "Mar-Gio 10:00-16:00"
+     * - "Lun-Mer 15:00-19:00"
+     *
+     * Se ORARIO_DISP non contiene una fascia oraria (es. "Corsi serali"), il metodo ritorna true
+     * per non alterare il comportamento pre-esistente (gestione non vincolata a orari).
+     */
+    public static boolean isDisponibile(int idDipendente,
+                                        LocalDate data,
+                                        LocalTime oraInizio,
+                                        int durataMinuti) throws Exception {
+
+        String orarioDisp = getOrarioDisponibilita(idDipendente);
+
+        // Nessuna info -> non blocco
+        if (orarioDisp == null || orarioDisp.trim().isEmpty()) {
+            return true;
+        }
+
+        // Disponibilità non oraria (es. "Corsi serali") -> non blocco
+        if (!containsTimeRange(orarioDisp)) {
+            return true;
+        }
+
+        LocalTime oraFine = oraInizio.plusMinutes(durataMinuti);
+        DayOfWeek giorno = data.getDayOfWeek();
+
+        // Supporta più segmenti separati da ; o ,
+        String[] segmenti = orarioDisp.split("[;,]");
+        for (String seg : segmenti) {
+            if (matchesSegment(seg.trim(), giorno, oraInizio, oraFine)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String getOrarioDisponibilita(int idDipendente) throws Exception {
+        String sql = "SELECT ORARIO_DISP FROM DIPENDENTE WHERE ID_DIPENDENTE = ?";
+
+        try (Connection conn = GestioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idDipendente);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("ORARIO_DISP");
+                }
+            }
+        }
+        return null;
+    }
+
+    private static final Pattern TIME_RANGE =
+            Pattern.compile("(\\d{1,2}:\\d{2})\\s*-\\s*(\\d{1,2}:\\d{2})");
+
+    private static boolean containsTimeRange(String s) {
+        return TIME_RANGE.matcher(s).find();
+    }
+
+    private static boolean matchesSegment(String segment,
+                                          DayOfWeek giorno,
+                                          LocalTime oraInizio,
+                                          LocalTime oraFine) {
+
+        if (segment == null || segment.isEmpty()) return false;
+
+        // Il token dei giorni è il primo elemento (es. "Sab" o "Lun-Ven")
+        String[] parts = segment.split("\\s+");
+        if (parts.length < 2) return false;
+
+        String giorniToken = parts[0].trim();
+
+        Matcher m = TIME_RANGE.matcher(segment);
+        if (!m.find()) return false;
+
+        LocalTime dispStart;
+        LocalTime dispEnd;
+        try {
+            dispStart = LocalTime.parse(m.group(1));
+            dispEnd   = LocalTime.parse(m.group(2));
+        } catch (Exception e) {
+            return false;
+        }
+
+        if (!dayMatches(giorniToken, giorno)) {
+            return false;
+        }
+
+        // Intervallo richiesto [oraInizio, oraFine) deve stare dentro [dispStart, dispEnd]
+        return !oraInizio.isBefore(dispStart) && !oraFine.isAfter(dispEnd);
+    }
+
+    private static boolean dayMatches(String token, DayOfWeek day) {
+        token = token.trim();
+
+        if (!token.contains("-")) {
+            DayOfWeek single = parseItDay(token);
+            return single != null && single == day;
+        }
+
+        String[] ab = token.split("-");
+        if (ab.length != 2) return false;
+
+        DayOfWeek start = parseItDay(ab[0].trim());
+        DayOfWeek end   = parseItDay(ab[1].trim());
+        if (start == null || end == null) return false;
+
+        int s = start.getValue(); // MON=1 ... SUN=7
+        int e = end.getValue();
+        int d = day.getValue();
+
+        // Range normale (es. Lun-Ven)
+        if (s <= e) {
+            return d >= s && d <= e;
+        }
+
+        // Range che attraversa la domenica (robustezza, es. Ven-Lun)
+        return d >= s || d <= e;
+    }
+
+    private static DayOfWeek parseItDay(String abbr) {
+        String a = abbr.toLowerCase();
+
+        // accettiamo sia abbreviazioni che forme estese (robustezza)
+        if (a.startsWith("lun")) return DayOfWeek.MONDAY;
+        if (a.startsWith("mar")) return DayOfWeek.TUESDAY;
+        if (a.startsWith("mer")) return DayOfWeek.WEDNESDAY;
+        if (a.startsWith("gio")) return DayOfWeek.THURSDAY;
+        if (a.startsWith("ven")) return DayOfWeek.FRIDAY;
+        if (a.startsWith("sab")) return DayOfWeek.SATURDAY;
+        if (a.startsWith("dom")) return DayOfWeek.SUNDAY;
+        return null;
     }
 }

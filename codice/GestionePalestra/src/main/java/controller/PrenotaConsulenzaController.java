@@ -158,6 +158,22 @@ public class PrenotaConsulenzaController implements PrenotaConsulenzaAction {
         }
 
         try {
+            // ==========================================================
+            //  NUOVO CONTROLLO: disponibilità del dipendente (ORARIO_DISP)
+            // ==========================================================
+            int durata = ConsulenzaDAO.durataStimataMinuti(tipo);
+            if (!DipendenteDAO.isDisponibile(idDip, data, ora, durata)) {
+                ThemedDialog.showMessage(view.asWindow(),
+                        "Errore",
+                        "Il professionista selezionato non è disponibile in quell'orario.\n" +
+                        "Seleziona una fascia compatibile con la sua disponibilità.",
+                        true);
+                return;
+            }
+
+            // ==========================================================
+            //  CONTROLLO CONFLITTO: sovrapposizione con consulenze esistenti
+            // ==========================================================
             if (ConsulenzaDAO.esisteConflitto(
                     cliente.getIdCliente(), idDip, tipo, data, ora)) {
 
