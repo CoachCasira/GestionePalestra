@@ -18,6 +18,10 @@ public class SelezionaAbbonamentoView extends JFrame implements SelezionaAbbonam
     private static final Color ORANGE_HO = new Color(255, 170, 40);
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
+    // Dimensioni "telefono-like" allineate alla Home
+    private static final int FRAME_W = 420;
+    private static final int FRAME_H = 650;
+
     private JRadioButton rbBase;
     private JRadioButton rbCompleto;
     private JRadioButton rbCorsi;
@@ -46,7 +50,9 @@ public class SelezionaAbbonamentoView extends JFrame implements SelezionaAbbonam
     private void initUI() {
         setTitle("GestionePalestra - Scelta abbonamento");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 500);
+
+        // Allineamento dimensioni con HomeView
+        setSize(FRAME_W, FRAME_H);
         setLocationRelativeTo(null);
         setResizable(false);
 
