@@ -19,6 +19,10 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
     private static final Color ORANGE_HO = new Color(255, 170, 40);
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
+    // Dimensioni "telefono-like" allineate alla Home
+    private static final int FRAME_W = 420;
+    private static final int FRAME_H = 650;
+
     private PagamentoAction action;
 
     private JLabel lblTipo;
@@ -45,14 +49,28 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
     private void initUI() {
         setTitle("GestionePalestra - Pagamento abbonamento");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(550, 400);
+
+        // Allineamento dimensioni con HomeView
+        setSize(FRAME_W, FRAME_H);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBackground(DARK_BG);
-        setContentPane(main);
+        // Contenuto scrollabile (così non serve mai "allargare" la finestra)
+        JPanel content = new JPanel(new BorderLayout());
+        content.setBackground(DARK_BG);
 
+        JScrollPane scrollPane = new JScrollPane(
+                content,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(DARK_BG);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        setContentPane(scrollPane);
+
+        // HEADER
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(DARK_BG);
@@ -72,7 +90,12 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
         header.add(Box.createVerticalStrut(5));
         header.add(lblSotto);
 
-        main.add(header, BorderLayout.NORTH);
+        content.add(header, BorderLayout.NORTH);
+
+        // CENTER (card)
+        JPanel centerWrapper = new JPanel(new BorderLayout());
+        centerWrapper.setBackground(DARK_BG);
+        centerWrapper.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
 
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
@@ -82,6 +105,8 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
 
         lblTipo = new JLabel("Tipo abbonamento: " + abbonamento.getTipo());
         lblTipo.setForeground(Color.WHITE);
@@ -92,7 +117,7 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
         lblFascia = new JLabel("Fascia oraria: " + abbonamento.getFasciaOrariaConsentita());
         lblFascia.setForeground(Color.WHITE);
 
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridy = 0;
         card.add(lblTipo, gbc);
         gbc.gridy++;
         card.add(lblPrezzo, gbc);
@@ -113,8 +138,10 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
         comboMetodo.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
         card.add(comboMetodo, gbc);
 
-        main.add(card, BorderLayout.CENTER);
+        centerWrapper.add(card, BorderLayout.NORTH);
+        content.add(centerWrapper, BorderLayout.CENTER);
 
+        // FOOTER (bottoni)
         JPanel buttons = new JPanel();
         buttons.setBackground(DARK_BG);
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
@@ -126,8 +153,9 @@ public class PagamentoView extends JFrame implements PagamentoViewContract {
         buttons.add(Box.createHorizontalStrut(15));
         buttons.add(btnAnnulla);
 
-        main.add(buttons, BorderLayout.SOUTH);
+        content.add(buttons, BorderLayout.SOUTH);
 
+        // Listener
         btnPaga.addActionListener(e -> {
             if (action != null) {
                 String metodo = (String) comboMetodo.getSelectedItem();
