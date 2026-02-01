@@ -3,7 +3,8 @@ package view.dialog;
 import model.Cliente;
 
 
-import view.HomeView;
+
+
 
 import javax.swing.*;
 
@@ -33,7 +34,7 @@ public class DisdiciCorsoDialog extends JDialog {
     private static final Color ORANGE_HO = new Color(255, 170, 40);
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
-    private final HomeView parent;
+    private final Window parent;
     private final Cliente  cliente;
 
     private List<IscrizioneInfo> iscrizioniFuture;
@@ -41,8 +42,8 @@ public class DisdiciCorsoDialog extends JDialog {
     private JList<String>        lista;
     private DefaultListModel<String> listModel;
 
-    public DisdiciCorsoDialog(HomeView parent, Cliente cliente) {
-        super(parent, "Disdici corso", true);
+    public DisdiciCorsoDialog(Window parent, Cliente cliente) {
+        super(parent, "Disdici corso", Dialog.ModalityType.APPLICATION_MODAL);
         this.parent  = parent;
         this.cliente = cliente;
 
